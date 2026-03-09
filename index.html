@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGC - Sistema de Gestión GSCI</title>
+    <title>SGC GSCI - Sistema de Gestión</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
@@ -21,7 +21,7 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); color: #1e293b; height: 100vh; display: flex; overflow: hidden; }
 
-        /* Pantallas Iniciales */
+        /* Pantallas de Acceso */
         #login-screen, #setup-screen { position: fixed; inset: 0; background: var(--sidebar); display: flex; align-items: center; justify-content: center; z-index: 5000; padding: 20px; }
         .login-box { background: var(--white); padding: 30px; border-radius: 24px; max-width: 400px; width: 100%; text-align: center; }
 
@@ -32,130 +32,127 @@
             position: relative; z-index: 1000;
         }
 
-        /* Header Móvil */
         .mobile-header {
             display: none; background: var(--sidebar); color: white;
-            padding: 10px 20px; justify-content: space-between; align-items: center;
+            padding: 12px 20px; justify-content: space-between; align-items: center;
             position: fixed; top: 0; left: 0; right: 0; z-index: 2000;
         }
 
         /* Main Content */
-        .main { flex: 1; padding: 30px; overflow-y: auto; display: none; margin-top: 0; }
+        .main { flex: 1; padding: 30px; overflow-y: auto; display: none; }
         .section { display: none; max-width: 1200px; margin: 0 auto; }
         .section.active { display: block; }
 
-        /* Cards y Grids */
+        /* UI Elements */
         .card { background: white; padding: 20px; border-radius: 16px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
         .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
-        /* Tablas Responsivas */
-        .table-container { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        /* Tablas */
+        .table-container { width: 100%; overflow-x: auto; }
         table { width: 100%; border-collapse: collapse; min-width: 600px; }
         th { text-align: left; padding: 12px; background: #f1f5f9; font-size: 11px; text-transform: uppercase; color: #64748b; }
         td { padding: 12px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
 
-        /* Botones */
         .btn { padding: 10px 18px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; transition: 0.2s; }
         .btn-primary { background: var(--primary); color: white; }
+        .btn-success { background: var(--success); color: white; }
+        .btn-danger { background: var(--danger); color: white; }
         .btn-ghost { background: #f1f5f9; color: #475569; }
 
         /* RESPONSIVIDAD */
         @media (max-width: 900px) {
             body { flex-direction: column; }
-            .sidebar { 
-                position: fixed; left: -280px; top: 0; bottom: 0; 
-                display: flex !important; width: 280px; box-shadow: 10px 0 30px rgba(0,0,0,0.4);
-            }
+            .sidebar { position: fixed; left: -280px; top: 0; bottom: 0; display: flex !important; width: 260px; box-shadow: 10px 0 30px rgba(0,0,0,0.4); }
             .sidebar.open { left: 0; }
             .mobile-header { display: flex; }
-            .main { padding: 80px 15px 20px; } /* Espacio para el header móvil */
+            .main { padding: 80px 15px 20px; }
             .grid-4, .grid-2 { grid-template-columns: 1fr; }
-            .modal-content { grid-template-columns: 1fr !important; height: 95vh; overflow-y: auto; }
-            .overlay-active { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 900; }
+            .modal-content { grid-template-columns: 1fr !important; height: 90vh; overflow-y: auto; }
+            #sidebar-overlay.active { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 900; }
         }
 
         #loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; }
         .spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .nav-link { display: flex; align-items: center; padding: 12px; color: #94a3b8; border: none; background: none; cursor: pointer; width: 100%; border-radius: 12px; margin-bottom: 5px; font-size: 14px; text-decoration: none; }
+        .nav-link { display: flex; align-items: center; padding: 12px; color: #94a3b8; border: none; background: none; cursor: pointer; width: 100%; border-radius: 12px; margin-bottom: 5px; font-size: 14px; text-align: left; }
         .nav-link.active { background: var(--accent); color: white; }
         .nav-link span { margin-right: 12px; }
 
-        /* Modal Overlay */
+        /* Modal */
         .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 4000; padding: 15px; }
-        .modal-content { background: white; width: 100%; max-width: 1000px; border-radius: 20px; display: grid; grid-template-columns: 1fr 320px; overflow: hidden; max-height: 90vh; }
+        .modal-content { background: white; width: 100%; max-width: 1000px; border-radius: 20px; display: grid; grid-template-columns: 1fr 320px; overflow: hidden; max-height: 85vh; }
+        
+        .settings-item { padding: 10px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
     </style>
 </head>
 <body>
 
-    <div id="loading-overlay"><div class="spinner"></div><p style="margin-top:10px; font-weight:700;">Procesando...</p></div>
+    <div id="loading-overlay"><div class="spinner"></div><p style="margin-top:10px; font-weight:700;">Sincronizando...</p></div>
     <div id="sidebar-overlay" onclick="window.toggleSidebar()"></div>
 
     <header class="mobile-header">
         <div style="display:flex; align-items:center; gap:10px;">
-            <button class="btn" style="background:none; color:white; padding:5px;" onclick="window.toggleSidebar()">
-                <span class="material-icons-round">menu</span>
-            </button>
-            <span style="font-weight: 800; font-size: 14px;">GSCI SGC</span>
+            <button class="btn" style="background:none; color:white; padding:5px;" onclick="window.toggleSidebar()"><span class="material-icons-round">menu</span></button>
+            <span style="font-weight: 800;">GSCI SGC</span>
         </div>
-        <img id="mobile-user-photo" src="" style="width:30px; height:30px; border-radius:50%; display:none;">
+        <a href="https://juniorrcede3002-arch.github.io/Sistemadegestion/" style="color:white; text-decoration:none;"><span class="material-icons-round">home</span></a>
     </header>
 
     <div id="login-screen">
         <div class="login-box">
-            <h1 style="color:var(--primary); font-weight:800; font-size:24px;">SGC GSCI</h1>
-            <p style="color:#64748b; margin:10px 0 25px;">Gestión de Calidad Multi-Espacio</p>
-            <button class="btn btn-primary" id="btn-login-google" style="width:100%; padding:14px; gap:12px;">
+            <h1 style="color:var(--primary); font-weight:800;">SGC GSCI</h1>
+            <p style="color:#64748b; margin:10px 0 25px;">Gestión Multi-Espacio</p>
+            <button class="btn btn-primary" id="btn-login-google" style="width:100%; padding:14px; gap:10px;">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="18">
-                Continuar con Google
+                Entrar con Google
             </button>
         </div>
     </div>
 
     <div id="setup-screen" style="display:none;">
         <div class="login-box">
-            <h3>Configura tu Espacio</h3>
-            <p style="font-size:13px; color:#64748b; margin-bottom:20px;">Dale un nombre a tu sección del sistema.</p>
-            <input type="text" id="setup-ws-name" placeholder="Ej: Mi Empresa S.A.">
-            <button class="btn btn-primary" style="width:100%" id="btn-confirm-setup">COMENZAR</button>
+            <h3>Nombre de tu Espacio</h3>
+            <input type="text" id="setup-ws-name" placeholder="Ej: Control Calidad S.A.">
+            <button class="btn btn-primary" style="width:100%" id="btn-confirm-setup">CREAR ESPACIO</button>
         </div>
     </div>
 
     <aside class="sidebar" id="sidebar">
         <div style="margin-bottom:30px; padding:10px;">
-            <h2 id="display-ws-name" style="color:var(--accent); font-size:16px; font-weight:800; text-transform:uppercase;">MI ESPACIO</h2>
+            <h2 id="display-ws-name" style="color:var(--accent); font-size:15px; font-weight:800; text-transform:uppercase;">WORKSPACE</h2>
             <p id="display-user-email" style="font-size:10px; color:#94a3b8; margin-top:4px;"></p>
         </div>
         <nav style="flex:1">
             <button class="nav-link active" onclick="window.cambiarVista('sec-dash', this)"><span class="material-icons-round">dashboard</span> Dashboard</button>
             <button class="nav-link" onclick="window.cambiarVista('sec-crear', this)"><span class="material-icons-round">add_circle</span> Nueva Solicitud</button>
             <button class="nav-link" onclick="window.cambiarVista('sec-gest', this)"><span class="material-icons-round">assignment</span> Gestión GSCI</button>
+            <button class="nav-link" onclick="window.cambiarVista('sec-listado', this)"><span class="material-icons-round">library_books</span> Listado Maestro</button>
             <button class="nav-link" onclick="window.cambiarVista('sec-colab', this)"><span class="material-icons-round">people</span> Colaboradores</button>
             <button class="nav-link" onclick="window.cambiarVista('sec-struct', this)"><span class="material-icons-round">settings</span> Estructura</button>
         </nav>
-        <button onclick="window.logout()" class="nav-link" style="color:var(--danger); margin-top:20px;">
-            <span class="material-icons-round">logout</span> Cerrar Sesión
-        </button>
+        <button onclick="window.logout()" class="nav-link" style="color:var(--danger); margin-top:20px;"><span class="material-icons-round">logout</span> Salir</button>
     </aside>
 
     <main class="main" id="main">
-        
         <section id="sec-dash" class="section active">
-            <h1>Analytics</h1>
+            <h1>Analytics del Espacio</h1>
             <div class="grid-4" style="margin-top:20px;">
-                <div class="card" style="border-left:5px solid var(--primary)"><label>Total Solicitudes</label><h2 id="dash-tot">0</h2></div>
-                <div class="card" style="border-left:5px solid var(--warning)"><label>En Proceso</label><h2 id="dash-pend">0</h2></div>
+                <div class="card" style="border-left:5px solid var(--primary)"><label>Solicitudes Totales</label><h2 id="dash-tot">0</h2></div>
+                <div class="card" style="border-left:5px solid var(--warning)"><label>En Gestión</label><h2 id="dash-pend">0</h2></div>
             </div>
+            <a href="https://juniorrcede3002-arch.github.io/Sistemadegestion/" class="btn btn-ghost" style="margin-top:20px;">
+                <span class="material-icons-round">link</span> Acceso Directo al Sistema
+            </a>
         </section>
 
         <section id="sec-crear" class="section">
             <div class="card" style="max-width:850px; margin:auto;">
-                <h2>Registrar Solicitud FCI-SOL</h2>
+                <h2>Nueva Solicitud FCI-SOL</h2>
                 <div class="grid-2">
                     <div>
-                        <label>Acción</label>
+                        <label>Acción a realizar</label>
                         <select id="sol-accion" onchange="window.togglePanelExtra(this.value)">
                             <option value="Creación">Creación</option>
                             <option value="Modificación">Modificación</option>
@@ -168,8 +165,8 @@
                 <div id="panel-extra" style="display:none; background:#f1f5f9; padding:15px; border-radius:12px; margin-bottom:15px; border: 1px solid #cbd5e1;">
                     <div class="grid-3">
                         <div><label>Código Actual</label><input type="text" id="sol-cod-ref" placeholder="Ej: FCI-001"></div>
-                        <div><label>Versión Actual</label><input type="text" id="sol-ver-ref" placeholder="Ej: 02"></div>
-                        <div><label>Fecha Ult. Ver.</label><input type="date" id="sol-fecha-ref"></div>
+                        <div><label>Versión Actual</label><input type="text" id="sol-ver-ref" placeholder="Ej: 01"></div>
+                        <div><label>Fecha Ult. Versión</label><input type="date" id="sol-fecha-ref"></div>
                     </div>
                 </div>
 
@@ -178,14 +175,14 @@
                     <div><label>Gerencia</label><select id="sol-ger" onchange="window.actualizarDeptos(this.value)"></select></div>
                     <div><label>Departamento</label><select id="sol-dep"></select></div>
                 </div>
-                <label>Justificación del Cambio</label><textarea id="sol-motivo" rows="3"></textarea>
-                <label>Adjuntar Archivo (Opcional)</label><input type="file" id="sol-file">
-                <button class="btn btn-primary" style="width:100%; margin-top:10px; padding:15px;" id="btnSendSol">ENVIAR A REVISIÓN</button>
+                <label>Motivo del Cambio / Justificación</label><textarea id="sol-motivo" rows="3"></textarea>
+                <label>Adjuntar Archivo</label><input type="file" id="sol-file">
+                <button class="btn btn-primary" style="width:100%; margin-top:10px; padding:15px;" id="btnSendSol">REGISTRAR SOLICITUD</button>
             </div>
         </section>
 
         <section id="sec-gest" class="section">
-            <h1>Bandeja de Gestión Administrativa</h1>
+            <h1>Gestión Administrativa</h1>
             <div class="card" style="padding:0; margin-top:20px;">
                 <div class="table-container">
                     <table>
@@ -197,43 +194,37 @@
         </section>
 
         <section id="sec-colab" class="section">
-            <h1>Gestión de Accesos</h1>
-            <div class="grid-2" style="margin-top:20px;">
+            <h1>Gestión de Colaboradores</h1>
+            <div class="grid-2">
                 <div class="card">
                     <h3>Invitar por Correo</h3>
-                    <p style="font-size:11px; color:#64748b; margin-bottom:15px;">El usuario debe entrar con Google usando este correo.</p>
-                    <label>Email del Invitado</label>
-                    <input type="email" id="invite-email" placeholder="ejemplo@gmail.com">
-                    <button class="btn btn-primary" onclick="window.enviarInvitacion()">DAR ACCESO</button>
+                    <input type="email" id="invite-email" placeholder="usuario@gmail.com">
+                    <button class="btn btn-primary" onclick="window.enviarInvitacion()" style="margin-top:10px;">DAR ACCESO AL ESPACIO</button>
                 </div>
                 <div class="card" style="padding:0;">
-                    <div class="table-container">
-                        <table>
-                            <thead><tr><th>Usuario</th><th>Rol</th><th>Eliminar</th></tr></thead>
-                            <tbody id="tbody-colabs"></tbody>
-                        </table>
-                    </div>
+                    <table><thead><tr><th>Usuario</th><th>Rol</th><th>Eliminar</th></tr></thead><tbody id="tbody-colabs"></tbody></table>
                 </div>
             </div>
         </section>
 
         <section id="sec-struct" class="section">
+            <h1>Configuración de Estructura</h1>
             <div class="grid-3">
                 <div class="card">
                     <h3>Tipos Doc.</h3>
-                    <div style="display:flex; gap:5px;"><input type="text" id="t-nom" style="margin:0;"><button class="btn btn-primary" onclick="window.agregarTipoDoc()">+</button></div>
-                    <div id="list-tipos" style="margin-top:10px;"></div>
+                    <div style="display:flex; gap:5px;"><input type="text" id="t-nom" style="margin:0;"><button class="btn btn-success" onclick="window.agregarTipoDoc()">+</button></div>
+                    <div id="list-tipos"></div>
                 </div>
                 <div class="card">
                     <h3>Gerencias</h3>
-                    <div style="display:flex; gap:5px;"><input type="text" id="g-nom" style="margin:0;"><button class="btn btn-primary" onclick="window.guardarGerencia()">+</button></div>
-                    <div id="list-ger" style="margin-top:10px;"></div>
+                    <div style="display:flex; gap:5px;"><input type="text" id="g-nom" style="margin:0;"><button class="btn btn-success" onclick="window.guardarGerencia()">+</button></div>
+                    <div id="list-ger"></div>
                 </div>
                 <div class="card">
-                    <h3>Departamentos</h3>
+                    <h3>Deptos.</h3>
                     <select id="d-ger-sel"></select>
-                    <div style="display:flex; gap:5px;"><input type="text" id="d-nom" style="margin:0;"><button class="btn btn-primary" onclick="window.guardarDepartamento()">+</button></div>
-                    <div id="list-dep" style="margin-top:10px;"></div>
+                    <div style="display:flex; gap:5px;"><input type="text" id="d-nom" style="margin:0;"><button class="btn btn-success" onclick="window.guardarDepartamento()">+</button></div>
+                    <div id="list-dep"></div>
                 </div>
             </div>
         </section>
@@ -250,9 +241,9 @@
                 </div>
             </div>
             <div style="background:#f8fafc; padding:20px; border-left:1px solid #ddd; display:flex; flex-direction:column;">
-                <h4>Bitácora / Comentarios</h4>
-                <div id="chat-box" style="flex:1; height:250px; overflow-y:auto; margin:15px 0; font-size:12px; background:white; border-radius:8px; padding:10px; border:1px solid #e2e8f0;"></div>
-                <textarea id="m-comment" placeholder="Escribe un mensaje..." rows="2" style="margin:0;"></textarea>
+                <h4>Bitácora / Chat</h4>
+                <div id="chat-box" style="flex:1; height:250px; overflow-y:auto; margin:15px 0; font-size:12px; background:white; padding:10px; border-radius:8px; border:1px solid #e2e8f0;"></div>
+                <textarea id="m-comment" placeholder="Comentar..." rows="2"></textarea>
                 <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="window.enviarComentario()">Enviar</button>
             </div>
         </div>
@@ -277,20 +268,25 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
+        // EmailJS Init
+        emailjs.init("0xTGvm-GEN3ZBckbY");
+        const SERVICE_ID = "service_20sm1nj";
+        const TEMPLATE_ID = "template_60rn43d";
+
+        // Cloudinary Config
         const CLOUD_NAME = "df79cjklp";
         const UPLOAD_PRESET = "sistema2";
 
         let currentWS = null, userData = null, selectedId = null, selectedData = null;
         let allDeps = [], tiposDoc = [];
 
-        // --- ASIGNACIÓN DE FUNCIONES GLOBALES ---
-        
+        // --- FUNCIONES GLOBALES ---
         window.showLoading = () => document.getElementById('loading-overlay').style.display = 'flex';
         window.hideLoading = () => document.getElementById('loading-overlay').style.display = 'none';
 
         window.toggleSidebar = () => {
             document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebar-overlay').classList.toggle('overlay-active');
+            document.getElementById('sidebar-overlay').classList.toggle('active');
         };
 
         window.cambiarVista = (id, btn) => {
@@ -313,19 +309,19 @@
             document.getElementById('m-tit').innerText = "Solicitud ID: " + (selectedData.customId || id);
             document.getElementById('m-data').innerHTML = `
                 <b>Título:</b> ${selectedData.titulo}<br>
-                <b>Gerencia/Depto:</b> ${selectedData.gerencia} - ${selectedData.departamento}<br>
+                <b>Gerencia:</b> ${selectedData.gerencia} - ${selectedData.departamento}<br>
                 <b>Acción:</b> ${selectedData.accion}<br>
                 <b>Estado:</b> ${selectedData.estado}<br>
                 ${selectedData.adjunto ? `<a href="${selectedData.adjunto}" target="_blank" style="color:var(--primary); font-weight:700;">Ver Archivo Adjunto</a>` : 'Sin adjunto'}
             `;
             const cb = document.getElementById('chat-box');
-            cb.innerHTML = (selectedData.chat || []).map(c => `<div style="margin-bottom:8px;"><b>${c.u}:</b> ${c.m} <br><small style="color:#999">${c.t}</small></div>`).join('');
+            cb.innerHTML = (selectedData.chat || []).map(c => `<div><b>${c.u}:</b> ${c.m} <br><small style="color:#999">${c.t}</small></div>`).join('');
             document.getElementById('modal').style.display = 'flex';
         };
 
         window.closeModal = () => document.getElementById('modal').style.display = 'none';
 
-        // --- LÓGICA DE ID CORRELATIVO (00001, 00002...) ---
+        // --- ID CORRELATIVO 5 DÍGITOS ---
         async function getNextSequenceId() {
             const counterRef = doc(db, "workspaces", currentWS, "config", "counters");
             let newId = 1;
@@ -341,7 +337,7 @@
             return String(newId).padStart(5, '0');
         }
 
-        // --- LOGIN Y AUTH ---
+        // --- AUTH & WORKSPACE ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 window.showLoading();
@@ -367,6 +363,8 @@
                 window.hideLoading();
             } else {
                 document.getElementById('login-screen').style.display = 'flex';
+                document.getElementById('sidebar').style.display = 'none';
+                document.getElementById('main').style.display = 'none';
             }
         });
 
@@ -401,7 +399,7 @@
                 s.forEach(d => {
                     const sol = d.data(); tot++;
                     if(sol.estado !== "Aprobado Final") pend++;
-                    html += `<tr><td><b>${sol.customId || 'S/N'}</b></td><td>${sol.solicitante}</td><td>${sol.titulo}</td><td>${sol.estado}</td><td><button class="btn btn-ghost" style="padding:5px 10px;" onclick="window.verDetalle('${d.id}')">Ver</button></td></tr>`;
+                    html += `<tr><td><b>${sol.customId || 'S/N'}</b></td><td>${sol.solicitante}</td><td>${sol.titulo}</td><td>${sol.estado}</td><td><button class="btn btn-ghost" onclick="window.verDetalle('${d.id}')">Ver</button></td></tr>`;
                 });
                 document.getElementById('tbody-gestionar').innerHTML = html;
                 document.getElementById('dash-tot').innerText = tot;
@@ -411,7 +409,7 @@
             onSnapshot(q("Gerencias"), s => {
                 let h = "", opts = "<option value=''>-- Seleccionar --</option>";
                 s.forEach(d => {
-                    h += `<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #eee;">${d.data().nombre} <button onclick="window.del('Gerencias','${d.id}')" style="color:red; border:none; background:none; cursor:pointer;">X</button></div>`;
+                    h += `<div class="settings-item">${d.data().nombre} <button onclick="window.del('Gerencias','${d.id}')" style="color:red; border:none; background:none; cursor:pointer;">X</button></div>`;
                     opts += `<option value="${d.data().nombre}">${d.data().nombre}</option>`;
                 });
                 document.getElementById('list-ger').innerHTML = h;
@@ -423,7 +421,7 @@
                 allDeps = []; let h = "";
                 s.forEach(d => {
                     const dep = d.data(); allDeps.push(dep);
-                    h += `<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #eee;">${dep.nombre} <small>(${dep.gerencia})</small> <button onclick="window.del('Departamentos','${d.id}')" style="color:red; border:none; background:none; cursor:pointer;">X</button></div>`;
+                    h += `<div class="settings-item">${dep.nombre} <small>(${dep.gerencia})</small> <button onclick="window.del('Departamentos','${d.id}')" style="color:red; border:none; background:none; cursor:pointer;">X</button></div>`;
                 });
                 document.getElementById('list-dep').innerHTML = h;
             });
@@ -432,7 +430,7 @@
                 tiposDoc = snap.data().tiposDoc || [];
                 let h = "", opts = "";
                 tiposDoc.forEach((t, i) => {
-                    h += `<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #eee;">${t} <button onclick="window.eliminarTipoDoc(${i})" style="color:red; border:none; background:none; cursor:pointer;">X</button></div>`;
+                    h += `<div class="settings-item">${t} <button onclick="window.eliminarTipoDoc(${i})" style="color:red; border:none; background:none; cursor:pointer;">X</button></div>`;
                     opts += `<option value="${t}">${t}</option>`;
                 });
                 document.getElementById('list-tipos').innerHTML = h;
@@ -443,13 +441,13 @@
                 let h = "";
                 s.forEach(d => {
                     const u = d.data();
-                    h += `<tr><td>${u.nombre}<br><small>${u.email}</small></td><td>${u.role}</td><td><button onclick="window.del('users','${d.id}')" style="color:red; border:none; background:none; cursor:pointer;">X</button></td></tr>`;
+                    h += `<tr><td>${u.nombre}</td><td>${u.role}</td><td><button onclick="window.del('users','${d.id}')" style="color:red; border:none; background:none; cursor:pointer;">X</button></td></tr>`;
                 });
                 document.getElementById('tbody-colabs').innerHTML = h;
             });
         }
 
-        // --- ACCIONES ---
+        // --- ACCIONES CORE ---
 
         document.getElementById('btnSendSol').onclick = async () => {
             const f = document.getElementById('sol-file').files[0];
@@ -498,7 +496,11 @@
             if(!email) return;
             window.showLoading();
             await addDoc(collection(db, "invitations"), { email, wsId: currentWS, date: new Date().toISOString() });
-            alert("Acceso otorgado. El usuario puede entrar con su cuenta de Google.");
+            
+            emailjs.send(SERVICE_ID, TEMPLATE_ID, { to_email: email, from_name: userData.nombre })
+                .then(() => alert("Acceso otorgado e invitación enviada."))
+                .catch(() => alert("Acceso otorgado (Error enviando correo)"));
+
             document.getElementById('invite-email').value = "";
             window.hideLoading();
         };
