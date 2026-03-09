@@ -3,766 +3,593 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGC - Sistema de Gestión de Calidad</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
-    
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <title>Herramientas de Datos Excel - Pro</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    
     <style>
         :root {
-            --primary: #1e40af; --accent: #3b82f6; --bg: #f8fafc;
-            --success: #059669; --warning: #d97706; --danger: #dc2626;
-            --info: #0891b2; --white: #ffffff; --border: #e2e8f0; --sidebar: #0f172a;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --success: #16a34a;
+            --success-hover: #15803d;
+            --bg-color: #f8fafc;
+            --panel-bg: #ffffff;
+            --border: #e2e8f0;
+            --text: #334155;
+            --ref-color: #f59e0b;
+            --select-color: rgba(37, 99, 235, 0.2);
+            --select-border: #2563eb;
         }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text);
+            margin: 0; 
+            padding: 20px; 
+            height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* Pestañas */
+        .tabs { display: flex; border-bottom: 2px solid var(--border); margin-bottom: 20px; gap: 10px; }
+        .tab-btn { padding: 12px 24px; cursor: pointer; border: none; background: none; font-size: 16px; font-weight: 600; color: #64748b; border-bottom: 3px solid transparent; transition: all 0.2s; }
+        .tab-btn:hover { color: var(--primary); }
+        .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+        .tab-content { display: none; flex: 1; overflow: hidden; }
+        .tab-content.active { display: flex; }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
-        body { background: var(--bg); color: #1e293b; height: 100vh; display: flex; overflow: hidden; }
+        /* Estilos Comunes */
+        h2 { margin-top: 0; padding-bottom: 10px; border-bottom: 2px solid var(--border); font-size: 20px; }
+        h3 { font-size: 16px; margin-bottom: 10px; color: #475569; margin-top: 0; }
+        .form-group { margin-bottom: 12px; }
+        label { font-weight: 600; font-size: 13px; display: block; margin-bottom: 5px; color: #475569; }
+        input[type="file"], input[type="text"], select { 
+            width: 100%; padding: 8px; box-sizing: border-box; 
+            border: 1px solid var(--border); border-radius: 5px; font-family: inherit; font-size: 13px;
+        }
+        input[type="text"]::placeholder { color: #94a3b8; }
+        button { font-family: inherit; }
+        button.btn-main { background-color: var(--primary); color: white; border: none; padding: 10px 15px; cursor: pointer; font-size: 14px; font-weight: bold; border-radius: 5px; }
+        button.btn-main:hover { background-color: var(--primary-hover); }
+        button.btn-success { background-color: var(--success); color: white; border: none; padding: 15px; cursor: pointer; font-size: 16px; font-weight: bold; border-radius: 5px; margin-top: auto; }
+        button.btn-success:hover { background-color: var(--success-hover); }
 
-        /* Login & Setup */
-        #login-screen, #setup-screen { position: fixed; inset: 0; background: var(--sidebar); display: flex; align-items: center; justify-content: center; z-index: 5000; padding: 20px; }
-        .login-box { background: var(--white); padding: 35px; border-radius: 24px; max-width: 420px; width: 100%; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-
-        /* Sidebar & Header */
-        .sidebar { width: 280px; background: var(--sidebar); color: white; display: none; flex-direction: column; padding: 20px; transition: 0.3s; z-index: 1000; overflow-y: auto; }
-        .mobile-header { display: none; background: var(--sidebar); color: white; padding: 12px 20px; justify-content: space-between; align-items: center; position: fixed; top: 0; left: 0; right: 0; z-index: 2000; height: 60px; }
-
-        /* Main Content */
-        .main { flex: 1; padding: 30px; overflow-y: auto; display: none; }
-        .section { display: none; max-width: 1200px; margin: 0 auto; animation: fadeIn 0.3s ease; }
-        .section.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* UI Elements */
-        .card { background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
-        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 12px; font-size: 14px; outline: none; transition: 0.2s; }
-        input:focus, select:focus, textarea:focus { border-color: var(--accent); }
-        label { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; margin-bottom: 4px; display: block; }
-
-        .btn { padding: 11px 20px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 13px; transition: 0.2s; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-success { background: var(--success); color: white; }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-ghost { background: #f1f5f9; color: #475569; }
-        .btn:hover { filter: brightness(0.95); }
-
+        /* Contenedores de Layout */
+        .validador-layout, .armar-layout { display: flex; gap: 20px; width: 100%; height: 100%; }
+        .armar-layout { flex-direction: column; }
+        .panel-controles { width: 380px; background: var(--panel-bg); padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow-y: auto; gap: 20px; }
+        .seccion-archivo { padding: 15px; border: 1px solid var(--border); border-radius: 6px; background-color: #fafafa; }
+        .seccion-principal { border-left: 4px solid var(--primary); }
+        .seccion-referencia { border-left: 4px solid var(--ref-color); }
+        .panel-vista { flex: 1; display: flex; flex-direction: column; gap: 20px; overflow: hidden; }
+        .vista-contenedor { flex: 1; background: var(--panel-bg); padding: 15px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); display: flex; flex-direction: column; overflow: hidden; }
+        
         /* Tablas */
-        .table-container { width: 100%; overflow-x: auto; border-radius: 15px; border: 1px solid var(--border); }
-        table { width: 100%; border-collapse: collapse; background: white; min-width: 900px; }
-        th { text-align: left; padding: 15px; background: #f8fafc; font-size: 11px; color: #64748b; text-transform: uppercase; border-bottom: 2px solid var(--border); }
-        td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
+        .table-container { overflow: auto; flex: 1; border: 1px solid var(--border); border-radius: 5px; margin-top: 10px; background: white; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th, td { border: 1px solid var(--border); padding: 6px 10px; text-align: left; white-space: nowrap; }
+        th { background-color: #f1f5f9; position: sticky; top: 0; z-index: 10; box-shadow: 0 1px 0 var(--border); }
+        tbody tr:hover { background-color: #f8fafc; }
+        .info-text { font-size: 12px; color: #64748b; margin: 0; }
 
-        /* Navegación */
-        .nav-link { display: flex; align-items: center; padding: 12px; color: #94a3b8; border: none; background: none; cursor: pointer; width: 100%; border-radius: 12px; margin-bottom: 5px; font-size: 14px; text-align: left; transition: 0.2s; }
-        .nav-link.active { background: var(--accent); color: white; font-weight: 700; }
-        .nav-link:hover:not(.active) { background: rgba(255,255,255,0.05); color: white; }
-        .nav-link span { margin-right: 12px; }
+        /* Estilos Pestaña Armar */
+        .armar-toolbar { display: flex; justify-content: space-between; background: var(--panel-bg); padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .bloques-container { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding-bottom: 20px; }
+        .bloque-archivo { background: var(--panel-bg); padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); border-left: 5px solid var(--primary); display: flex; gap: 20px; }
+        .bloque-config { width: 300px; flex-shrink: 0; border-right: 1px solid var(--border); padding-right: 20px; }
+        .bloque-columnas { flex: 1; display: flex; flex-direction: column; gap: 10px; }
+        .columnas-box { border: 1px dashed var(--border); padding: 10px; border-radius: 6px; min-height: 60px; background: #fafafa; }
+        .columnas-box h4 { margin: 0 0 10px 0; font-size: 13px; color: #64748b; }
+        .col-pill { display: inline-block; padding: 6px 12px; margin: 0 5px 5px 0; background: white; border: 1px solid #cbd5e1; border-radius: 20px; font-size: 12px; cursor: pointer; transition: all 0.2s; user-select: none; }
+        .col-pill:hover { border-color: var(--primary); color: var(--primary); }
+        .col-pill.selected { background: var(--primary); color: white; border-color: var(--primary); }
+        .col-pill.selected:hover { background: #dc2626; border-color: #dc2626; }
+        
+        /* Píldora de Espacio Vacío */
+        .col-pill.empty-pill { background: #e2e8f0; color: #475569; border-color: #cbd5e1; font-style: italic; }
+        .col-pill.empty-pill:hover { background: #ef4444; border-color: #ef4444; color: white; }
 
-        /* Responsivo */
-        @media (max-width: 1024px) {
-            .sidebar { position: fixed; left: -280px; top: 0; bottom: 0; width: 280px; box-shadow: 10px 0 40px rgba(0,0,0,0.4); }
-            .sidebar.open { left: 0; }
-            .mobile-header { display: flex; }
-            .main { padding: 80px 15px 20px; }
-            .grid-4, .grid-3, .grid-2 { grid-template-columns: 1fr; }
-            #sidebar-overlay.active { position: fixed; inset: 0; background: rgba(0,0,0,0.5); z-index: 900; }
-        }
+        .btn-eliminar-bloque { background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; float: right; font-size: 12px; }
 
-        #loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        /* Estilos del Input de Rango con Botón de Mouse */
+        .rango-input-group { display: flex; gap: 5px; }
+        .btn-mouse { background: #e2e8f0; border: 1px solid #cbd5e1; border-radius: 5px; cursor: pointer; padding: 0 10px; transition: background 0.2s; display: flex; align-items: center; justify-content: center; }
+        .btn-mouse:hover { background: #cbd5e1; }
 
-        /* Modales */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.7); display: none; align-items: center; justify-content: center; z-index: 4000; padding: 15px; backdrop-filter: blur(4px); }
-        .modal-content { background: white; width: 100%; max-width: 1050px; border-radius: 24px; display: grid; grid-template-columns: 1fr 320px; overflow: hidden; max-height: 85vh; }
-        .modal-simple { background: white; padding: 30px; border-radius: 20px; max-width: 400px; width: 100%; }
-
-        .param-row { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 10px; padding-bottom: 10px; border-bottom: 1px dashed #e2e8f0; }
+        /* MODAL DE SELECCIÓN VISUAL */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center; }
+        .modal-content { background: white; width: 90%; max-width: 1200px; height: 85vh; border-radius: 8px; display: flex; flex-direction: column; box-shadow: 0 10px 25px rgba(0,0,0,0.2); overflow: hidden; }
+        .modal-header { padding: 15px 20px; background: #f8fafc; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .modal-header h3 { margin: 0; color: #0f172a; }
+        .modal-body { flex: 1; overflow: auto; padding: 0; position: relative; user-select: none; }
+        .modal-footer { padding: 15px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 10px; background: #f8fafc; }
+        
+        /* Tabla del Modal */
+        table.grid-select { width: max-content; border-collapse: collapse; }
+        table.grid-select th { background: #e2e8f0; text-align: center; color: #475569; position: sticky; top: 0; z-index: 10; font-size: 12px; padding: 4px 8px; }
+        table.grid-select th.row-header { position: sticky; left: 0; z-index: 11; width: 30px; background: #e2e8f0; }
+        table.grid-select th.corner { z-index: 12; }
+        table.grid-select td { border: 1px solid #cbd5e1; min-width: 80px; height: 25px; padding: 4px 8px; cursor: crosshair; font-size: 12px; color: #334155; }
+        table.grid-select td.selected { background-color: var(--select-color) !important; border: 1px solid var(--select-border); }
     </style>
 </head>
 <body>
 
-    <div id="loading-overlay"><div class="spinner"></div><p style="margin-top:10px; font-weight:700;">Procesando Información...</p></div>
-    <div id="sidebar-overlay" onclick="window.toggleSidebar()"></div>
-
-    <header class="mobile-header">
-        <div style="display:flex; align-items:center; gap:10px;">
-            <button class="btn" style="background:none; color:white; padding:5px;" onclick="window.toggleSidebar()"><span class="material-icons-round">menu</span></button>
-            <span style="font-weight: 800;">SGC - SISTEMA</span>
-        </div>
-    </header>
-
-    <div id="login-screen">
-        <div class="login-box">
-            <h1 style="color:var(--primary); font-weight:900; font-size:28px;">SGC</h1>
-            <p style="color:#64748b; margin:10px 0 30px;">Gestión de Calidad e Información</p>
-            <button class="btn btn-primary" id="btn-login-google" style="width:100%; padding:15px; gap:12px; background:white; color:#1e293b; border:1px solid #ddd;">
-                <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="20">
-                Iniciar Sesión con Google
-            </button>
-        </div>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="cambiarTab('tab-validador')">1. Validador de Datos</button>
+        <button class="tab-btn" onclick="cambiarTab('tab-armar')">2. Armar / Unificar Excel</button>
     </div>
 
-    <div id="setup-screen" style="display:none;">
-        <div class="login-box">
-            <h3>Configura tu Espacio</h3>
-            <p style="font-size:13px; color:#64748b; margin-bottom:20px;">Cada espacio es privado e independiente.</p>
-            <input type="text" id="setup-ws-name" placeholder="Nombre de la Organización">
-            <button class="btn btn-primary" style="width:100%" id="btn-confirm-setup">CREAR ENTORNO PRIVADO</button>
-        </div>
-    </div>
-
-    <aside class="sidebar" id="sidebar">
-        <div style="margin-bottom:30px; padding:10px; border-bottom:1px solid rgba(255,255,255,0.1);">
-            <h2 id="display-ws-name" style="color:var(--accent); font-size:15px; font-weight:900; text-transform:uppercase;">MI ESPACIO</h2>
-            <p id="display-user-email" style="font-size:10px; color:#94a3b8; margin-top:4px;"></p>
-        </div>
-        <nav style="flex:1">
-            <button class="nav-link active" onclick="window.cambiarVista('sec-dash', this)"><span class="material-icons-round">dashboard</span> Dashboard</button>
-            <button class="nav-link" onclick="window.cambiarVista('sec-crear', this)"><span class="material-icons-round">add_circle</span> Nueva Solicitud</button>
-            <button class="nav-link" onclick="window.cambiarVista('sec-gest', this)"><span class="material-icons-round">fact_check</span> Gestión Administrativa</button>
-            <button class="nav-link" onclick="window.cambiarVista('sec-hist', this)"><span class="material-icons-round">history</span> Mis Solicitudes</button>
-            <button class="nav-link" onclick="window.cambiarVista('sec-maestro', this)"><span class="material-icons-round">library_books</span> Listado Maestro</button>
-            <button class="nav-link" onclick="window.cambiarVista('sec-dinamico', this)"><span class="material-icons-round">settings_suggest</span> Registro Dinámico</button>
-            <button class="nav-link" onclick="window.cambiarVista('sec-consulta', this)"><span class="material-icons-round">manage_search</span> Consultar Registros</button>
-            <button class="nav-link" onclick="window.cambiarVista('sec-audit', this)"><span class="material-icons-round">event_available</span> Auditorías</button>
-            <button class="nav-link" onclick="window.cambiarVista('sec-colab', this)"><span class="material-icons-round">manage_accounts</span> Usuarios y Accesos</button>
-            <button class="nav-link" onclick="window.cambiarVista('sec-struct', this)"><span class="material-icons-round">account_tree</span> Estructura del SGC</button>
-        </nav>
-        <button onclick="window.logout()" class="nav-link" style="color:var(--danger); margin-top:20px;"><span class="material-icons-round">logout</span> Salir del Sistema</button>
-    </aside>
-
-    <main class="main" id="main">
-        
-        <section id="sec-dash" class="section active">
-            <h1>Panel de Control</h1>
-            <div class="grid-4" style="margin-top:20px;">
-                <div class="card" style="border-top:5px solid var(--primary)"><label>Total Solicitudes</label><h2 id="dash-tot">0</h2></div>
-                <div class="card" style="border-top:5px solid var(--warning)"><label>En Revisión</label><h2 id="dash-pend">0</h2></div>
-                <div class="card" style="border-top:5px solid var(--success)"><label>Docs. Maestros</label><h2 id="dash-maestro">0</h2></div>
-                <div class="card" style="border-top:5px solid var(--danger)"><label>Usuarios Activos</label><h2 id="dash-users">0</h2></div>
-            </div>
-        </section>
-
-        <section id="sec-crear" class="section">
-            <div class="card" style="max-width:850px; margin:auto;">
-                <h2>Registrar Documento / Solicitud</h2>
-                <div style="background:#f8fafc; padding:15px; border-radius:12px; margin-bottom:20px; border:1px solid #e2e8f0;">
-                    <div class="grid-2">
-                        <div><label>Solicitante</label><p id="sol-info-email" style="font-size:14px; font-weight:700; color:var(--primary);"></p></div>
-                        <div><label>Gerente de tu Área</label><p id="sol-info-gerente" style="font-size:14px; font-weight:700; color:var(--info);">Cargando...</p></div>
-                    </div>
-                </div>
-                <div class="grid-2">
-                    <div>
-                        <label>Acción</label>
-                        <select id="sol-accion" onchange="window.togglePanelExtra(this.value)">
-                            <option value="Creación">Creación</option>
-                            <option value="Modificación">Modificación</option>
-                            <option value="Inactivación">Inactivación</option>
-                        </select>
-                    </div>
-                    <div><label>Tipo Documento</label><select id="sol-tipo-doc"></select></div>
-                </div>
-
-                <div id="panel-extra" style="display:none; background:#f1f5f9; padding:15px; border-radius:12px; margin-bottom:15px; border: 1px dashed #cbd5e1;">
-                    <div class="grid-3">
-                        <div><label>Código Actual</label><input type="text" id="sol-cod-ref" placeholder="Ej: PRO-001"></div>
-                        <div><label>Versión Actual</label><input type="text" id="sol-ver-ref" placeholder="Ej: 01"></div>
-                        <div><label>Fecha Ult. Versión</label><input type="date" id="sol-fecha-ref"></div>
-                    </div>
-                </div>
-
-                <label>Título del Documento</label><input type="text" id="sol-tit">
-                <div class="grid-2">
-                    <div><label>Gerencia</label><select id="sol-ger" onchange="window.actualizarDeptos(this.value)"></select></div>
-                    <div><label>Departamento</label><select id="sol-dep"></select></div>
-                </div>
-                <label>Justificación / Motivo</label><textarea id="sol-motivo" rows="3"></textarea>
-                <label>Adjuntar Documento o Evidencia</label><input type="file" id="sol-file" style="padding:10px; background:#f8fafc; border:1px dashed #94a3b8;">
-                <button class="btn btn-primary" style="width:100%; padding:15px; margin-top:10px;" id="btnSendSol">ENVIAR SOLICITUD AL FLUJO</button>
-            </div>
-        </section>
-
-        <section id="sec-gest" class="section">
-            <h1>Gestión Administrativa de Solicitudes</h1>
-            <div class="card" style="padding:0; margin-top:20px;">
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>ID</th><th>Solicitante</th><th>Área</th><th>Título</th><th>Estado</th><th>Gestión</th></tr></thead>
-                        <tbody id="tbody-gestionar"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section id="sec-hist" class="section">
-            <h1>Mis Solicitudes Enviadas</h1>
-            <div class="card" style="padding:0; margin-top:20px;">
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>ID</th><th>Fecha</th><th>Título</th><th>Estado</th><th>Detalle</th></tr></thead>
-                        <tbody id="tbody-historial"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section id="sec-maestro" class="section">
-            <h1>Listado Maestro</h1>
-            <div class="card" style="padding:0; margin-top:20px;">
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>Código</th><th>Título</th><th>Tipo</th><th>Gerencia</th><th>Versión</th><th>Documento</th><th>Acción</th></tr></thead>
-                        <tbody id="tbody-maestro"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section id="sec-dinamico" class="section">
-            <div class="grid-2">
-                <div class="card">
-                    <h3>Construir Formulario (Plantilla)</h3>
-                    <div id="param-builder">
-                        <div class="param-row">
-                            <input type="text" class="p-name" placeholder="Nombre del Campo" style="flex:1; margin:0;">
-                            <select class="p-type" style="width:140px; margin:0;">
-                                <option value="texto">Texto</option><option value="numero">Número</option><option value="fecha">Fecha</option>
-                                <option value="correo">Correo</option><option value="check">Check (Sí/No)</option>
-                                <option value="imagen">Imagen</option><option value="documento">Documento</option><option value="firma">Firma</option>
-                            </select>
+    <div id="tab-validador" class="tab-content active">
+        <div class="validador-layout">
+            <div class="panel-controles">
+                <h2>Configuración</h2>
+                
+                <div class="seccion-archivo seccion-principal">
+                    <h3>📘 Archivo Principal</h3>
+                    <div class="form-group"><input type="file" id="archivo1" accept=".xlsx, .xls"></div>
+                    <div class="form-group"><label>Hoja:</label><select id="hoja1"><option value="">Sube archivo...</option></select></div>
+                    <div class="form-group">
+                        <label>Rango (Ej: A5:Z100):</label>
+                        <div class="rango-input-group">
+                            <input type="text" id="rango1" placeholder="Automático">
+                            <button type="button" class="btn-mouse" onclick="abrirModal('wb1', 'hoja1', 'rango1')" title="Seleccionar con el ratón">🖱️</button>
                         </div>
                     </div>
-                    <button class="btn btn-ghost" onclick="window.addParamRow()" style="width:100%; margin-bottom:10px;">+ AGREGAR CAMPO</button>
-                    <button class="btn btn-primary" onclick="window.saveTemplate()" style="width:100%;">GUARDAR PLANTILLA</button>
+                    <div class="form-group"><label>Columna a validar:</label><select id="col1"><option value="">Selecciona hoja...</option></select></div>
                 </div>
-                <div class="card">
-                    <h3>Capturar Información</h3>
-                    <div id="dynamic-form-render"><p style="color:#94a3b8; font-style:italic;">Configura una plantilla para habilitar la captura.</p></div>
-                    <button class="btn btn-success" id="btnSaveDynamic" style="width:100%; display:none; margin-top:15px;" onclick="window.saveDynamicData()">GUARDAR REGISTRO</button>
-                </div>
-            </div>
-        </section>
 
-        <section id="sec-consulta" class="section">
-            <h1>Auditoría de Registros Dinámicos</h1>
-            <div class="card" style="padding:0; margin-top:20px;">
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>Fecha Registro</th><th>Usuario</th><th>Datos Capturados</th><th>Acción</th></tr></thead>
-                        <tbody id="tbody-consulta"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section id="sec-audit" class="section">
-            <h1>Calendario de Auditorías</h1>
-            <div class="card">
-                <div class="grid-4">
-                    <div><label>Fecha</label><input type="date" id="aud-fecha"></div>
-                    <div><label>Proceso a Auditar</label><input type="text" id="aud-proceso"></div>
-                    <div><label>Auditado</label><input type="text" id="aud-auditado"></div>
-                    <div><label>Auditor</label><input type="text" id="aud-auditor"></div>
-                </div>
-                <button class="btn btn-primary" onclick="window.guardarAuditoria()" style="width:100%">PROGRAMAR AUDITORÍA</button>
-            </div>
-            <div class="card" style="padding:0; margin-top:20px;">
-                <div class="table-container">
-                    <table>
-                        <thead><tr><th>Fecha</th><th>Proceso</th><th>Auditado</th><th>Auditor</th><th>Eliminar</th></tr></thead>
-                        <tbody id="tbody-audit"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <section id="sec-colab" class="section">
-            <h1>Gestión de Accesos y Roles</h1>
-            <div class="grid-2">
-                <div class="card">
-                    <h3>Invitar Usuario</h3>
-                    <p style="font-size:12px; color:#64748b; margin-bottom:15px;">Se enviará una invitación a su correo.</p>
-                    <input type="email" id="invite-email" placeholder="correo@google.com">
-                    <button class="btn btn-primary" onclick="window.enviarInvitacion()" style="width:100%;">ENVIAR INVITACIÓN</button>
-                </div>
-                <div class="card" style="padding:0;">
-                    <div class="table-container">
-                        <table>
-                            <thead><tr><th>Nombre / Correo</th><th>Rol</th><th>Gerencia</th><th>Acciones</th></tr></thead>
-                            <tbody id="tbody-colabs"></tbody>
-                        </table>
+                <div class="seccion-archivo seccion-referencia">
+                    <h3>📙 Archivo de Referencia</h3>
+                    <div class="form-group"><input type="file" id="archivo2" accept=".xlsx, .xls"></div>
+                    <div class="form-group"><label>Hoja:</label><select id="hoja2"><option value="">Sube archivo...</option></select></div>
+                    <div class="form-group">
+                        <label>Rango (Ej: A5:Z100):</label>
+                        <div class="rango-input-group">
+                            <input type="text" id="rango2" placeholder="Automático">
+                            <button type="button" class="btn-mouse" onclick="abrirModal('wb2', 'hoja2', 'rango2')" title="Seleccionar con el ratón">🖱️</button>
+                        </div>
                     </div>
+                    <div class="form-group"><label>Columna con datos exactos:</label><select id="col2"><option value="">Selecciona hoja...</option></select></div>
+                </div>
+                <button id="btnValidar" class="btn-success">Comparar y Descargar</button>
+            </div>
+            
+            <div class="panel-vista">
+                <div class="vista-contenedor">
+                    <h3>Vista Previa: Principal</h3><p class="info-text" id="info1">Esperando archivo...</p>
+                    <div class="table-container"><table id="tabla1"><thead id="head1"></thead><tbody id="body1"></tbody></table></div>
+                </div>
+                <div class="vista-contenedor">
+                    <h3>Vista Previa: Referencia</h3><p class="info-text" id="info2">Esperando archivo...</p>
+                    <div class="table-container"><table id="tabla2"><thead id="head2"></thead><tbody id="body2"></tbody></table></div>
                 </div>
             </div>
-        </section>
+        </div>
+    </div>
 
-        <section id="sec-struct" class="section">
-            <h1>Configuración de la Organización</h1>
-            <div class="grid-3" style="margin-top:20px;">
-                <div class="card">
-                    <h3>Tipos de Documento</h3>
-                    <div style="display:flex; gap:5px; margin-bottom:15px;"><input type="text" id="t-nom" style="margin:0;"><button class="btn btn-primary" onclick="window.agregarTipoDoc()">+</button></div>
-                    <div id="list-tipos"></div>
-                </div>
-                <div class="card">
-                    <h3>Gerencias</h3>
-                    <div style="display:flex; gap:5px; margin-bottom:15px;"><input type="text" id="g-nom" style="margin:0;"><button class="btn btn-primary" onclick="window.guardarGerencia()">+</button></div>
-                    <div id="list-ger"></div>
-                </div>
-                <div class="card">
-                    <h3>Departamentos</h3>
-                    <select id="d-ger-sel" style="margin-bottom:8px;"></select>
-                    <div style="display:flex; gap:5px;"><input type="text" id="d-nom" style="margin:0;"><button class="btn btn-primary" onclick="window.guardarDepto()">+</button></div>
-                    <div id="list-dep" style="margin-top:15px; border-top:1px solid #eee; padding-top:10px;"></div>
-                </div>
+    <div id="tab-armar" class="tab-content">
+        <div class="armar-layout">
+            <div class="armar-toolbar">
+                <button id="btnNuevoBloque" class="btn-main">+ Añadir Archivo para Unificar</button>
+                <button id="btnGenerarArmado" class="btn-success" style="margin-top:0; padding:10px 20px;">Generar Excel Unificado</button>
             </div>
-        </section>
-    </main>
+            <div id="contenedorBloques" class="bloques-container"></div>
+        </div>
+    </div>
 
-    <div class="modal-overlay" id="modal">
+    <div id="modalSeleccion" class="modal-overlay">
         <div class="modal-content">
-            <div style="padding:30px; overflow-y:auto;">
-                <h2 id="m-tit">Detalle de Gestión</h2>
-                <div id="m-data" style="margin-top:15px; font-size:14px; line-height:1.7;"></div>
-                <div style="margin-top:25px; display:flex; gap:10px; flex-wrap:wrap;">
-                    <button class="btn btn-primary" onclick="window.firmarPaso()">APROBAR ETAPA</button>
-                    <button class="btn btn-ghost" onclick="window.closeModal()">Cerrar</button>
-                </div>
+            <div class="modal-header">
+                <h3>🖱️ Selecciona los datos arrastrando el ratón</h3>
+                <span id="modalRangoActual" style="font-weight:bold; color:var(--primary); font-size: 16px;">Rango: -</span>
             </div>
-            <div style="background:#f8fafc; border-left:1px solid #e2e8f0; padding:25px; display:flex; flex-direction:column;">
-                <h4 style="margin-bottom:10px;">Bitácora de Eventos</h4>
-                <div id="chat-box" style="flex:1; height:280px; overflow-y:auto; margin-bottom:15px; background:white; padding:15px; border:1px solid #e2e8f0; border-radius:12px; font-size:13px;"></div>
-                <textarea id="m-comment" placeholder="Escribir un comentario o motivo..." rows="2"></textarea>
-                <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="window.enviarComentario()">ENVIAR MENSAJE</button>
+            <div class="modal-body" id="modalGridContainer"></div>
+            <div class="modal-footer">
+                <button class="btn-main" style="background:#64748b;" onclick="cerrarModal()">Cancelar</button>
+                <button class="btn-main" onclick="aplicarRangoModal()">Confirmar Selección</button>
             </div>
         </div>
     </div>
 
-    <div class="modal-overlay" id="modal-user">
-        <div class="modal-simple">
-            <h3 id="edit-user-title" style="margin-bottom:20px;">Configurar Acceso</h3>
-            <label>Rol en el Sistema</label>
-            <select id="edit-user-role">
-                <option value="Solicitante">Solicitante</option>
-                <option value="Gerente">Gerente de Área</option>
-                <option value="Administrador">Administrador del SGC</option>
-            </select>
-            <label>Gerencia Asignada</label>
-            <select id="edit-user-ger" onchange="window.actualizarDeptosEdicion(this.value)"></select>
-            <label>Departamento</label>
-            <select id="edit-user-dep"></select>
-            <div style="display:flex; gap:10px; margin-top:25px;">
-                <button class="btn btn-primary" style="flex:1;" onclick="window.guardarEdicionUsuario()">Guardar</button>
-                <button class="btn btn-ghost" style="flex:1;" onclick="window.closeModalUser()">Cancelar</button>
-            </div>
-        </div>
-    </div>
+    <script>
+        // ==========================================
+        // VARIABLES GLOBALES
+        // ==========================================
+        let wb1 = null; let wb2 = null;
+        let idBloqueCounter = 0;
+        const stateArmar = {};
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, updateDoc, setDoc, query, where, getDocs, arrayUnion, runTransaction, deleteDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyDHflRFI5xQjiRQDwZyfizelEilAE0TjXo",
-            authDomain: "sistemadegestion2-fd38e.firebaseapp.com",
-            projectId: "sistemadegestion2-fd38e",
-            storageBucket: "sistemadegestion2-fd38e.firebasestorage.app",
-            messagingSenderId: "871879438988",
-            appId: "1:871879438988:web:a3b9b63193879e8668c1a9"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const provider = new GoogleAuthProvider();
-
-        emailjs.init("0xTGvm-GEN3ZBckbY");
-        const CLOUD_NAME = "df79cjklp";
-        const UPLOAD_PRESET = "sistema2";
-
-        let currentWS = null, userData = null, selectedId = null, selectedData = null, editingUid = null;
-        let allDeps = [], tiposDoc = [], currentTemplate = [];
-
-        // --- FUNCIONES GLOBALES DE INTERFAZ ---
-        window.showLoading = () => document.getElementById('loading-overlay').style.display = 'flex';
-        window.hideLoading = () => document.getElementById('loading-overlay').style.display = 'none';
-
-        window.toggleSidebar = () => {
-            document.getElementById('sidebar').classList.toggle('open');
-            document.getElementById('sidebar-overlay').classList.toggle('active');
-        };
-
-        window.cambiarVista = (id, btn) => {
-            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-            const target = document.getElementById(id); if(target) target.classList.add('active');
-            if(btn) btn.classList.add('active');
-            if(window.innerWidth < 1024) window.toggleSidebar();
-            if(id === 'sec-crear') window.cargarContextoSolicitud();
-        };
-
-        window.togglePanelExtra = (v) => document.getElementById('panel-extra').style.display = (v === 'Creación') ? 'none' : 'block';
-        window.closeModal = () => document.getElementById('modal').style.display = 'none';
-        window.closeModalUser = () => document.getElementById('modal-user').style.display = 'none';
-
-        // --- ID CORRELATIVO (5 Dígitos) ---
-        async function getNextId() {
-            const ref = doc(db, "workspaces", currentWS, "config", "counters");
-            let newId = 1;
-            await runTransaction(db, async (t) => {
-                const snap = await t.get(ref);
-                if(snap.exists()) { newId = (snap.data().val || 0) + 1; t.update(ref, { val: newId }); }
-                else { t.set(ref, { val: 1 }); }
-            });
-            return String(newId).padStart(5, '0');
+        function cambiarTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
         }
 
-        // --- AUTENTICACIÓN Y CONFIGURACIÓN ---
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                window.showLoading();
-                const uRef = doc(db, "users", user.uid);
-                const snap = await getDoc(uRef);
-                if (snap.exists()) {
-                    userData = snap.data(); currentWS = userData.wsId;
-                    initWorkspace();
-                } else {
-                    const q = query(collection(db, "invitations"), where("email", "==", user.email.toLowerCase()));
-                    const invSnap = await getDocs(q);
-                    if (!invSnap.empty) {
-                        currentWS = invSnap.docs[0].data().wsId;
-                        userData = { uid: user.uid, email: user.email, wsId: currentWS, role: "Solicitante", nombre: user.displayName };
-                        await setDoc(uRef, userData); initWorkspace();
-                    } else {
-                        document.getElementById('setup-screen').style.display = 'flex';
-                        document.getElementById('login-screen').style.display = 'none';
-                    }
+        function getSheetJsOptions(rangoStr) {
+            const options = { defval: "" };
+            if (rangoStr && rangoStr.trim() !== "") {
+                const valor = rangoStr.trim();
+                if (!isNaN(valor)) options.range = parseInt(valor) - 1;
+                else options.range = valor.toUpperCase();
+            }
+            return options;
+        }
+
+        // ==========================================
+        // LÓGICA MODAL DE SELECCIÓN (RATÓN)
+        // ==========================================
+        let isSelecting = false;
+        let startRow = -1, startCol = -1, endRow = -1, endCol = -1;
+        let targetInputIdParaModal = "";
+
+        function numToCol(num) {
+            let col = '';
+            while (num >= 0) { col = String.fromCharCode((num % 26) + 65) + col; num = Math.floor(num / 26) - 1; }
+            return col;
+        }
+
+        function abrirModal(wbRef, idHoja, idInputRango) {
+            let workbook = null;
+            if (wbRef === 'wb1') workbook = wb1;
+            else if (wbRef === 'wb2') workbook = wb2;
+            else if (wbRef.startsWith('armar-')) {
+                const id = wbRef.split('-')[1];
+                workbook = stateArmar[id].workbook;
+            }
+
+            if (!workbook) return alert("Sube un archivo primero.");
+            const nombreHoja = document.getElementById(idHoja).value;
+            if (!nombreHoja) return alert("Selecciona una hoja primero.");
+
+            targetInputIdParaModal = idInputRango;
+            
+            const rawData = XLSX.utils.sheet_to_json(workbook.Sheets[nombreHoja], { header: 1, defval: "" });
+            renderizarGridModal(rawData);
+            document.getElementById('modalSeleccion').style.display = 'flex';
+        }
+
+        function cerrarModal() { document.getElementById('modalSeleccion').style.display = 'none'; }
+
+        function aplicarRangoModal() {
+            if (startRow !== -1 && endRow !== -1) {
+                const minR = Math.min(startRow, endRow); const maxR = Math.max(startRow, endRow);
+                const minC = Math.min(startCol, endCol); const maxC = Math.max(startCol, endCol);
+                const celdaInicio = numToCol(minC) + (minR + 1); const celdaFin = numToCol(maxC) + (maxR + 1);
+                
+                const inputElement = document.getElementById(targetInputIdParaModal);
+                inputElement.value = `${celdaInicio}:${celdaFin}`;
+                inputElement.dispatchEvent(new Event('change'));
+            }
+            cerrarModal();
+        }
+
+        function renderizarGridModal(data) {
+            const container = document.getElementById('modalGridContainer'); container.innerHTML = '';
+            
+            const limitRows = Math.min(data.length, 100);
+            let maxCols = 0;
+            for(let i=0; i<limitRows; i++) { if(data[i].length > maxCols) maxCols = data[i].length; }
+            if (maxCols === 0) maxCols = 10;
+
+            const table = document.createElement('table'); table.className = 'grid-select';
+            
+            const thead = document.createElement('thead'); const headTr = document.createElement('tr');
+            const thCorner = document.createElement('th'); thCorner.className = 'corner'; headTr.appendChild(thCorner);
+            
+            for(let c = 0; c < maxCols; c++) { const th = document.createElement('th'); th.textContent = numToCol(c); headTr.appendChild(th); }
+            thead.appendChild(headTr); table.appendChild(thead);
+
+            const tbody = document.createElement('tbody');
+            for (let r = 0; r < limitRows; r++) {
+                const tr = document.createElement('tr');
+                const thRow = document.createElement('th'); thRow.className = 'row-header'; thRow.textContent = r + 1; tr.appendChild(thRow);
+
+                for (let c = 0; c < maxCols; c++) {
+                    const td = document.createElement('td');
+                    td.textContent = data[r][c] !== undefined ? data[r][c] : '';
+                    td.dataset.r = r; td.dataset.c = c;
+                    td.addEventListener('mousedown', () => iniciarSeleccion(r, c));
+                    td.addEventListener('mouseenter', () => actualizarSeleccion(r, c));
+                    td.addEventListener('mouseup', () => finalizarSeleccion(r, c));
+                    tr.appendChild(td);
                 }
-                window.hideLoading();
-            } else { document.getElementById('login-screen').style.display = 'flex'; }
+                tbody.appendChild(tr);
+            }
+            table.appendChild(tbody); container.appendChild(table);
+            table.addEventListener('dragstart', (e) => e.preventDefault());
+        }
+
+        function iniciarSeleccion(r, c) { isSelecting = true; startRow = r; startCol = c; endRow = r; endCol = c; dibujarSeleccion(); }
+        function actualizarSeleccion(r, c) { if (isSelecting) { endRow = r; endCol = c; dibujarSeleccion(); } }
+        function finalizarSeleccion(r, c) { 
+            if (isSelecting) { 
+                endRow = r; endCol = c; isSelecting = false; dibujarSeleccion(); 
+                const minR = Math.min(startRow, endRow); const maxR = Math.max(startRow, endRow);
+                const minC = Math.min(startCol, endCol); const maxC = Math.max(startCol, endCol);
+                document.getElementById('modalRangoActual').textContent = `Rango: ${numToCol(minC)}${minR + 1}:${numToCol(maxC)}${maxR + 1}`;
+            } 
+        }
+        function dibujarSeleccion() {
+            const minR = Math.min(startRow, endRow); const maxR = Math.max(startRow, endRow);
+            const minC = Math.min(startCol, endCol); const maxC = Math.max(startCol, endCol);
+            document.querySelectorAll('.grid-select td').forEach(td => {
+                const r = parseInt(td.dataset.r); const c = parseInt(td.dataset.c);
+                if (r >= minR && r <= maxR && c >= minC && c <= maxC) td.classList.add('selected');
+                else td.classList.remove('selected');
+            });
+        }
+
+
+        // ==========================================
+        // LÓGICA: PESTAÑA 1 - VALIDADOR
+        // ==========================================
+        function procesarArchivoValidador(fileInputId, wbVarName, hojaSelectId, colSelectId, headId, bodyId, infoId, rangoInputId) {
+            document.getElementById(fileInputId).addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    const workbook = XLSX.read(new Uint8Array(event.target.result), { type: 'array' });
+                    if (wbVarName === 'wb1') wb1 = workbook; else wb2 = workbook;
+                    const selectorHoja = document.getElementById(hojaSelectId); selectorHoja.innerHTML = ''; 
+                    workbook.SheetNames.forEach(nombre => selectorHoja.appendChild(new Option(nombre, nombre)));
+                    actualizarHojaValidador(workbook, workbook.SheetNames[0], colSelectId, headId, bodyId, infoId, rangoInputId);
+                };
+                reader.readAsArrayBuffer(file);
+            });
+        }
+
+        function actualizarHojaValidador(workbook, nombreHoja, colSelectId, headId, bodyId, infoId, rangoInputId) {
+            if(!workbook || !nombreHoja) return;
+            const rangoVal = document.getElementById(rangoInputId).value;
+            const options = getSheetJsOptions(rangoVal);
+            
+            let jsonExcel = [];
+            try { jsonExcel = XLSX.utils.sheet_to_json(workbook.Sheets[nombreHoja], options); } 
+            catch (error) { document.getElementById(infoId).textContent = "Error al leer. Verifica el rango."; return; }
+
+            const selectorCol = document.getElementById(colSelectId); selectorCol.innerHTML = '';
+            const thead = document.getElementById(headId); const tbody = document.getElementById(bodyId);
+            thead.innerHTML = ''; tbody.innerHTML = '';
+
+            if (jsonExcel.length === 0) { document.getElementById(infoId).textContent = "Sin datos en ese rango."; return; }
+
+            const columnas = Object.keys(jsonExcel[0]);
+            columnas.forEach(col => selectorCol.appendChild(new Option(col, col)));
+
+            const limite = Math.min(jsonExcel.length, 50);
+            document.getElementById(infoId).textContent = `Mostrando ${limite} filas.`;
+
+            const trHead = document.createElement('tr');
+            columnas.forEach(col => { const th = document.createElement('th'); th.textContent = col; trHead.appendChild(th); });
+            thead.appendChild(trHead);
+
+            for (let i = 0; i < limite; i++) {
+                const tr = document.createElement('tr');
+                columnas.forEach(col => { const td = document.createElement('td'); td.textContent = jsonExcel[i][col]; tr.appendChild(td); });
+                tbody.appendChild(tr);
+            }
+        }
+
+        procesarArchivoValidador('archivo1', 'wb1', 'hoja1', 'col1', 'head1', 'body1', 'info1', 'rango1');
+        document.getElementById('hoja1').addEventListener('change', e => actualizarHojaValidador(wb1, e.target.value, 'col1', 'head1', 'body1', 'info1', 'rango1'));
+        document.getElementById('rango1').addEventListener('change', e => actualizarHojaValidador(wb1, document.getElementById('hoja1').value, 'col1', 'head1', 'body1', 'info1', 'rango1'));
+
+        procesarArchivoValidador('archivo2', 'wb2', 'hoja2', 'col2', 'head2', 'body2', 'info2', 'rango2');
+        document.getElementById('hoja2').addEventListener('change', e => actualizarHojaValidador(wb2, e.target.value, 'col2', 'head2', 'body2', 'info2', 'rango2'));
+        document.getElementById('rango2').addEventListener('change', e => actualizarHojaValidador(wb2, document.getElementById('hoja2').value, 'col2', 'head2', 'body2', 'info2', 'rango2'));
+
+        document.getElementById('btnValidar').addEventListener('click', function() {
+            if (!wb1 || !wb2) return alert("Sube AMBOS archivos Excel.");
+            
+            const nombreHoja1 = document.getElementById('hoja1').value; const col1 = document.getElementById('col1').value;
+            const nombreHoja2 = document.getElementById('hoja2').value; const col2 = document.getElementById('col2').value;
+            const rangoVal1 = document.getElementById('rango1').value; const rangoVal2 = document.getElementById('rango2').value;
+
+            const optsRef = getSheetJsOptions(rangoVal2);
+            const jsonReferencia = XLSX.utils.sheet_to_json(wb2.Sheets[nombreHoja2], optsRef);
+            const setReferencia = new Set(jsonReferencia.map(fila => String(fila[col2]).trim()).filter(dato => dato !== "" && dato !== "undefined"));
+
+            const optsPrin = getSheetJsOptions(rangoVal1);
+            let jsonPrincipal = XLSX.utils.sheet_to_json(wb1.Sheets[nombreHoja1], optsPrin);
+            
+            jsonPrincipal = jsonPrincipal.map(fila => {
+                const valorCelda = fila[col1] !== undefined ? String(fila[col1]).trim() : "";
+                let nuevaFila = { "Hoja Origen": nombreHoja1 };
+                Object.assign(nuevaFila, fila); 
+                nuevaFila['ESTADOS'] = setReferencia.has(valorCelda) ? 'DIGITALIZADO' : 'NO DIGITALIZADO'; 
+                return nuevaFila;
+            });
+
+            const nuevoWorkbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(nuevoWorkbook, XLSX.utils.json_to_sheet(jsonPrincipal), "Validado");
+            XLSX.writeFile(nuevoWorkbook, "Excel_Estado_Validado.xlsx");
         });
 
-        document.getElementById('btn-login-google').onclick = () => signInWithPopup(auth, provider);
+        // ==========================================
+        // LÓGICA: PESTAÑA 2 - ARMAR EXCEL
+        // ==========================================
+        document.getElementById('btnNuevoBloque').addEventListener('click', crearBloqueArmado);
 
-        document.getElementById('btn-confirm-setup').onclick = async () => {
-            const name = document.getElementById('setup-ws-name').value.trim();
-            if(!name) return;
-            window.showLoading();
-            const wsId = "WS-" + Date.now();
-            await setDoc(doc(db, "workspaces", wsId), { name, owner: auth.currentUser.uid });
-            await setDoc(doc(db, "users", auth.currentUser.uid), { uid: auth.currentUser.uid, email: auth.currentUser.email, wsId, role: "Administrador", nombre: auth.currentUser.displayName });
-            location.reload();
-        };
+        function crearBloqueArmado() {
+            idBloqueCounter++;
+            const id = idBloqueCounter;
+            stateArmar[id] = { workbook: null, selectedCols: [] };
 
-        async function initWorkspace() {
-            const wsSnap = await getDoc(doc(db, "workspaces", currentWS));
-            document.getElementById('display-ws-name').innerText = wsSnap.data().name;
-            document.getElementById('display-user-email').innerText = userData.email;
-            document.getElementById('sidebar').style.display = 'flex';
-            document.getElementById('main').style.display = 'block';
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('setup-screen').style.display = 'none';
-            syncData();
-        }
-
-        // --- SINCRONIZACIÓN DE DATOS (FIREBASE REALTIME) ---
-        function syncData() {
-            const q = (c) => query(collection(db, c), where("wsId", "==", currentWS));
-
-            // Solicitudes y Listado Maestro
-            onSnapshot(q("Solicitudes"), s => {
-                let hGest = "", hHist = "", hMaestro = "", tot = 0, pend = 0, ok = 0;
-                s.forEach(d => {
-                    const sol = d.data(); sol.id = d.id; tot++;
-                    
-                    // Maestro vs Gestión
-                    if(sol.estado === "APROBADO FINAL") {
-                        ok++;
-                        hMaestro += `<tr><td>${sol.customId}</td><td>${sol.titulo}</td><td>${sol.tipoDoc}</td><td>${sol.gerencia}</td><td>${sol.ver_ref || '01'}</td><td><a href="${sol.adjunto}" target="_blank" style="color:var(--primary); font-weight:bold;">VER DOC</a></td><td><button class="btn btn-danger" style="padding:6px;" onclick="window.del('Solicitudes','${d.id}')"><span class="material-icons-round" style="font-size:16px;">delete</span></button></td></tr>`;
-                    } else {
-                        pend++;
-                        hGest += `<tr><td><b>${sol.customId}</b></td><td>${sol.solicitante}</td><td>${sol.gerencia}</td><td>${sol.titulo}</td><td><span style="background:#fef3c7; color:#92400e; padding:4px 8px; border-radius:10px; font-size:11px; font-weight:800;">${sol.estado}</span></td><td><button class="btn btn-ghost" onclick="window.verDetalle('${sol.id}')">Ver</button></td></tr>`;
-                    }
-
-                    // Historial Personal
-                    if(sol.solicitante_email === userData.email) {
-                        hHist += `<tr><td>${sol.customId}</td><td>${new Date(sol.fecha || Date.now()).toLocaleDateString()}</td><td>${sol.titulo}</td><td>${sol.estado}</td><td><button class="btn btn-ghost" onclick="window.verDetalle('${sol.id}')">Ver</button></td></tr>`;
-                    }
-                });
-                document.getElementById('tbody-gestionar').innerHTML = hGest;
-                document.getElementById('tbody-historial').innerHTML = hHist;
-                document.getElementById('tbody-maestro').innerHTML = hMaestro;
-                document.getElementById('dash-tot').innerText = tot;
-                document.getElementById('dash-pend').innerText = pend;
-                document.getElementById('dash-maestro').innerText = ok;
-            });
-
-            // Gerencias
-            onSnapshot(q("Gerencias"), s => {
-                let h = "", opts = "<option value=''>-- Seleccionar --</option>";
-                s.forEach(d => {
-                    h += `<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #eee;">${d.data().nombre} <button onclick="window.del('Gerencias','${d.id}')" style="background:none; border:none; color:red; cursor:pointer;">X</button></div>`;
-                    opts += `<option value="${d.data().nombre}">${d.data().nombre}</option>`;
-                });
-                document.getElementById('list-ger').innerHTML = h;
-                document.getElementById('sol-ger').innerHTML = opts;
-                document.getElementById('d-ger-sel').innerHTML = opts;
-                document.getElementById('edit-user-ger').innerHTML = opts;
-            });
-
-            // Departamentos
-            onSnapshot(q("Departamentos"), s => {
-                allDeps = []; let h = "";
-                s.forEach(d => {
-                    allDeps.push(d.data());
-                    h += `<div style="padding:6px 0; border-bottom:1px solid #eee;">${d.data().nombre} <span style="color:#94a3b8; font-size:11px;">(${d.data().gerencia})</span> <button onclick="window.del('Departamentos','${d.id}')" style="float:right; border:none; background:none; cursor:pointer; color:red;">X</button></div>`;
-                });
-                document.getElementById('list-dep').innerHTML = h;
-            });
-
-            // Tipos y Plantilla (Workspaces doc)
-            onSnapshot(doc(db, "workspaces", currentWS), snap => {
-                tiposDoc = snap.data().tiposDoc || [];
-                let h = "", opts = "";
-                tiposDoc.forEach((t, i) => {
-                    h += `<div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid #eee;">${t} <button onclick="window.eliminarTipoDoc(${i})" style="background:none; border:none; color:red; cursor:pointer;">X</button></div>`;
-                    opts += `<option value="${t}">${t}</option>`;
-                });
-                document.getElementById('list-tipos').innerHTML = h;
-                document.getElementById('sol-tipo-doc').innerHTML = opts;
-                
-                // Cargar Plantilla
-                currentTemplate = snap.data().plantilla || [];
-                renderDynamicForm();
-            });
-
-            // Auditorías
-            onSnapshot(q("Auditorias"), s => {
-                let h = "";
-                s.forEach(d => {
-                    h += `<tr><td>${d.data().fecha}</td><td>${d.data().proceso}</td><td>${d.data().auditado}</td><td>${d.data().auditor}</td><td><button class="btn btn-danger" style="padding:6px;" onclick="window.del('Auditorias','${d.id}')"><span class="material-icons-round" style="font-size:14px;">delete</span></button></td></tr>`;
-                });
-                document.getElementById('tbody-audit').innerHTML = h;
-                document.getElementById('dash-audit-count').innerText = s.size;
-            });
-
-            // Usuarios Colaboradores
-            onSnapshot(q("users"), s => {
-                let h = "";
-                s.forEach(d => {
-                    const u = d.data();
-                    h += `<tr><td><strong>${u.nombre}</strong><br><small style="color:#64748b;">${u.email}</small></td><td>${u.role}</td><td>${u.gerencia || 'No asignada'}</td><td><button class="btn btn-ghost" onclick="window.abrirEditarUsuario('${d.id}')">Configurar</button></td></tr>`;
-                });
-                document.getElementById('tbody-colabs').innerHTML = h;
-                document.getElementById('dash-users').innerText = s.size;
-            });
-
-            // Registros Dinámicos (Consultas)
-            onSnapshot(q("RegistrosDinamicos"), s => {
-                let h = "";
-                s.forEach(d => {
-                    const reg = d.data();
-                    let vals = Object.entries(reg.valores || {}).map(([k,v]) => {
-                        if(v && v.toString().startsWith('http')) return `<b>${k}:</b> <a href="${v}" target="_blank">Ver Archivo</a>`;
-                        return `<b>${k}:</b> ${v}`;
-                    }).join('<br>');
-                    h += `<tr><td>${new Date(reg.fecha).toLocaleString()}</td><td>${reg.usuario || 'Desconocido'}</td><td><div style="font-size:12px; background:#f8fafc; padding:8px; border-radius:8px;">${vals}</div></td><td><button class="btn btn-danger" style="padding:6px;" onclick="window.del('RegistrosDinamicos','${d.id}')"><span class="material-icons-round" style="font-size:14px;">delete</span></button></td></tr>`;
-                });
-                document.getElementById('tbody-consulta').innerHTML = h;
-            });
-        }
-
-        // --- SOLICITUDES CORE ---
-        window.cargarContextoSolicitud = async () => {
-            document.getElementById('sol-info-email').innerText = userData.email;
-            const q = query(collection(db, "users"), where("wsId", "==", currentWS), where("role", "==", "Gerente"), where("gerencia", "==", userData.gerencia || ''));
-            const snap = await getDocs(q);
-            document.getElementById('sol-info-gerente').innerText = snap.empty ? "Área sin Gerente" : snap.docs[0].data().nombre;
-        };
-
-        document.getElementById('btnSendSol').onclick = async () => {
-            const f = document.getElementById('sol-file').files[0];
-            window.showLoading();
-            try {
-                let url = null;
-                if(f) {
-                    const form = new FormData(); form.append("file", f); form.append("upload_preset", UPLOAD_PRESET);
-                    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, { method: "POST", body: form });
-                    const dat = await res.json(); url = dat.secure_url;
-                }
-                const cid = await getNextId();
-                const accion = document.getElementById('sol-accion').value;
-                const data = {
-                    wsId: currentWS, customId: cid, titulo: document.getElementById('sol-tit').value,
-                    accion, tipoDoc: document.getElementById('sol-tipo-doc').value,
-                    gerencia: document.getElementById('sol-ger').value, departamento: document.getElementById('sol-dep').value,
-                    solicitante: userData.nombre, solicitante_email: userData.email, fecha: new Date().toISOString(),
-                    estado: "PENDIENTE", idx: 1, adjunto: url,
-                    chat: [{u: "SISTEMA", m: "Solicitud iniciada.", t: new Date().toLocaleString()}]
-                };
-
-                if(accion !== 'Creación') {
-                    data.cod_ref = document.getElementById('sol-cod-ref').value;
-                    data.ver_ref = document.getElementById('sol-ver-ref').value;
-                }
-
-                await addDoc(collection(db, "Solicitudes"), data);
-                alert("Solicitud guardada con ID: " + cid);
-                window.cambiarVista('sec-gest');
-            } catch (e) { alert("Error: " + e.message); }
-            finally { window.hideLoading(); }
-        };
-
-        window.verDetalle = async (id) => {
-            selectedId = id;
-            const snap = await getDoc(doc(db, "Solicitudes", id));
-            selectedData = snap.data();
-            document.getElementById('m-tit').innerText = "Gestión ID: " + selectedData.customId;
-            document.getElementById('m-data').innerHTML = `
-                <b>Título:</b> ${selectedData.titulo}<br>
-                <b>Gerencia:</b> ${selectedData.gerencia} (${selectedData.departamento})<br>
-                <b>Acción:</b> ${selectedData.accion}<br>
-                <b>Estado:</b> <span style="background:#f1f5f9; padding:2px 8px; border-radius:10px;">${selectedData.estado}</span><br><br>
-                ${selectedData.adjunto ? `<a href="${selectedData.adjunto}" target="_blank" style="color:var(--primary); font-weight:800;">[ VER DOCUMENTO ADJUNTO ]</a>` : 'Sin adjuntos.'}
+            const html = `
+                <div class="bloque-archivo" id="bloque-${id}">
+                    <div class="bloque-config">
+                        <button class="btn-eliminar-bloque" onclick="eliminarBloque(${id})">X</button>
+                        <h3>Archivo ${id}</h3>
+                        <div class="form-group"><input type="file" id="fileArmar-${id}" accept=".xlsx, .xls"></div>
+                        <div class="form-group"><label>Hoja:</label><select id="hojaArmar-${id}"><option value="">Sube archivo...</option></select></div>
+                        <div class="form-group">
+                            <label>Rango de datos:</label>
+                            <div class="rango-input-group">
+                                <input type="text" id="rangoArmar-${id}" placeholder="Automático">
+                                <button type="button" class="btn-mouse" onclick="abrirModal('armar-${id}', 'hojaArmar-${id}', 'rangoArmar-${id}')">🖱️</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bloque-columnas">
+                        <div class="columnas-box">
+                            <h4>1. Disponibles</h4>
+                            <div id="disponibles-${id}"><i>Sube archivo para ver columnas</i></div>
+                        </div>
+                        <div class="columnas-box" style="background:#f0fdf4; border-color:#86efac;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                <h4 style="margin:0;">2. Seleccionadas (Orden)</h4>
+                                <button type="button" onclick="agregarColumnaVacia(${id})" style="background:#10b981; color:white; border:none; border-radius:4px; cursor:pointer; font-size:11px; padding:4px 8px;">+ Añadir Espacio Vacío</button>
+                            </div>
+                            <div id="seleccionadas-${id}"><i>Aún no seleccionadas</i></div>
+                        </div>
+                    </div>
+                </div>
             `;
-            const cb = document.getElementById('chat-box');
-            cb.innerHTML = (selectedData.chat || []).map(c => `<div style="margin-bottom:10px; padding-bottom:10px; border-bottom:1px dashed #e2e8f0;"><b>${c.u}:</b> ${c.m} <br><small style="color:#94a3b8;">${c.t}</small></div>`).join('');
-            document.getElementById('modal').style.display = 'flex';
-        };
+            document.getElementById('contenedorBloques').insertAdjacentHTML('beforeend', html);
 
-        window.firmarPaso = async () => {
-            window.showLoading();
-            const nIdx = selectedData.idx + 1;
-            const nEst = nIdx < 4 ? ["ELABORADO", "VERIFICADO", "GERENCIA APROBÓ", "SGC APROBÓ"][nIdx] : "APROBADO FINAL";
-            await updateDoc(doc(db, "Solicitudes", selectedId), { 
-                idx: nIdx, estado: nEst, 
-                chat: arrayUnion({u: userData.nombre, m: `✅ Aprobó la etapa. Nuevo estado: ${nEst}`, t: new Date().toLocaleString()}) 
-            });
-            window.hideLoading(); window.closeModal();
-        };
-
-        window.enviarComentario = async () => {
-            const m = document.getElementById('m-comment').value.trim();
-            if(!m) return;
-            await updateDoc(doc(db, "Solicitudes", selectedId), { chat: arrayUnion({u: userData.nombre, m: m, t: new Date().toLocaleString()}) });
-            document.getElementById('m-comment').value = ""; window.verDetalle(selectedId);
-        };
-
-        // --- REGISTRO DINÁMICO ---
-        window.addParamRow = () => {
-            const container = document.getElementById('param-builder');
-            const div = document.createElement('div'); div.className = 'param-row';
-            div.innerHTML = `<input type="text" class="p-name" placeholder="Nombre del Campo" style="flex:1; margin:0;"><select class="p-type" style="width:140px; margin:0;"><option value="texto">Texto</option><option value="numero">Número</option><option value="fecha">Fecha</option><option value="correo">Correo</option><option value="check">Check (Sí/No)</option><option value="imagen">Imagen</option><option value="documento">Documento</option><option value="firma">Firma</option></select><button onclick="this.parentElement.remove()" style="color:white; background:var(--danger); border:none; border-radius:8px; padding:0 10px; font-weight:bold;">X</button>`;
-            container.appendChild(div);
-        };
-
-        window.saveTemplate = async () => {
-            window.showLoading();
-            const names = document.querySelectorAll('.p-name'), types = document.querySelectorAll('.p-type');
-            const plantilla = [];
-            names.forEach((n, i) => { if(n.value) plantilla.push({ name: n.value, type: types[i].value }); });
-            await updateDoc(doc(db, "workspaces", currentWS), { plantilla });
-            window.hideLoading(); alert("Plantilla Guardada Exitosamente.");
-        };
-
-        function renderDynamicForm() {
-            const container = document.getElementById('dynamic-form-render'); container.innerHTML = "";
-            if(currentTemplate.length === 0) return;
-            currentTemplate.forEach(f => {
-                let input = `<input type="${f.type === 'check' ? 'checkbox' : f.type === 'numero' ? 'number' : f.type === 'fecha' ? 'date' : 'text'}" class="dyn-input" data-name="${f.name}">`;
-                if(['imagen','documento','firma'].includes(f.type)) input = `<input type="file" class="dyn-input" data-name="${f.name}" data-file="true" style="padding:10px; background:#f8fafc; border:1px dashed #94a3b8;">`;
-                container.innerHTML += `<div style="margin-bottom:12px;"><label>${f.name} (${f.type})</label>${input}</div>`;
-            });
-            document.getElementById('btnSaveDynamic').style.display = "block";
+            document.getElementById(`fileArmar-${id}`).addEventListener('change', (e) => cargarArchivoArmar(e, id));
+            document.getElementById(`hojaArmar-${id}`).addEventListener('change', () => renderizarColumnasArmar(id));
+            document.getElementById(`rangoArmar-${id}`).addEventListener('change', () => renderizarColumnasArmar(id));
         }
 
-        window.saveDynamicData = async () => {
-            window.showLoading();
-            const inputs = document.querySelectorAll('.dyn-input'), data = { wsId: currentWS, fecha: new Date().toISOString(), usuario: userData.nombre, valores: {} };
-            for(let input of inputs) {
-                const name = input.getAttribute('data-name');
-                if(input.getAttribute('data-file')) {
-                    if(input.files[0]) {
-                        const form = new FormData(); form.append("file", input.files[0]); form.append("upload_preset", UPLOAD_PRESET);
-                        const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, { method: "POST", body: form });
-                        const dat = await res.json(); data.valores[name] = dat.secure_url;
-                    }
-                } else { data.valores[name] = input.type === 'checkbox' ? (input.checked ? 'SÍ' : 'NO') : input.value; }
-            }
-            await addDoc(collection(db, "RegistrosDinamicos"), data);
-            window.hideLoading(); alert("Registro capturado y guardado en Auditoría.");
-            window.cambiarVista('sec-consulta');
-        };
+        function eliminarBloque(id) { document.getElementById(`bloque-${id}`).remove(); delete stateArmar[id]; }
 
-        // --- AUDITORÍAS ---
-        window.guardarAuditoria = async () => {
-            const data = {
-                wsId: currentWS, fecha: document.getElementById('aud-fecha').value,
-                proceso: document.getElementById('aud-proceso').value,
-                auditado: document.getElementById('aud-auditado').value,
-                auditor: document.getElementById('aud-auditor').value
+        function cargarArchivoArmar(event, id) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const workbook = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+                stateArmar[id].workbook = workbook;
+                const selector = document.getElementById(`hojaArmar-${id}`); selector.innerHTML = '';
+                workbook.SheetNames.forEach(nombre => selector.appendChild(new Option(nombre, nombre)));
+                renderizarColumnasArmar(id);
             };
-            await addDoc(collection(db, "Auditorias"), data); alert("Auditoría Programada.");
-            document.getElementById('aud-fecha').value = ""; document.getElementById('aud-proceso').value = "";
-        };
+            reader.readAsArrayBuffer(file);
+        }
 
-        // --- USUARIOS E INVITACIONES ---
-        window.enviarInvitacion = async () => {
-            const email = document.getElementById('invite-email').value.trim().toLowerCase();
-            if(!email) return;
-            window.showLoading();
-            await addDoc(collection(db, "invitations"), { email, wsId: currentWS, date: new Date().toISOString() });
-            
-            emailjs.send("service_20sm1nj", "template_60rn43d", { 
-                to_email: email, from_name: userData.nombre, workspace_name: document.getElementById('display-ws-name').innerText 
-            }).then(() => alert("Invitación enviada por EmailJS a " + email)).catch(() => alert("Permiso concedido. (Notificación EmailJS falló)"));
-            
-            document.getElementById('invite-email').value = ""; window.hideLoading();
-        };
+        function renderizarColumnasArmar(id) {
+            const workbook = stateArmar[id].workbook;
+            if(!workbook) return;
 
-        window.abrirEditarUsuario = async (id) => {
-            editingUid = id;
-            const snap = await getDoc(doc(db, "users", id)); const u = snap.data();
-            document.getElementById('edit-user-title').innerText = "Configurar: " + u.nombre;
-            document.getElementById('edit-user-role').value = u.role || 'Solicitante';
-            document.getElementById('edit-user-ger').value = u.gerencia || '';
-            window.actualizarDeptosEdicion(u.gerencia);
-            document.getElementById('edit-user-dep').value = u.departamento || '';
-            document.getElementById('modal-user').style.display = 'flex';
-        };
+            const nombreHoja = document.getElementById(`hojaArmar-${id}`).value;
+            const rangoVal = document.getElementById(`rangoArmar-${id}`).value;
+            const options = getSheetJsOptions(rangoVal);
 
-        window.guardarEdicionUsuario = async () => {
-            await updateDoc(doc(db, "users", editingUid), { 
-                role: document.getElementById('edit-user-role').value, 
-                gerencia: document.getElementById('edit-user-ger').value, 
-                departamento: document.getElementById('edit-user-dep').value 
+            let jsonExcel = [];
+            try { jsonExcel = XLSX.utils.sheet_to_json(workbook.Sheets[nombreHoja], options); } 
+            catch(e) { document.getElementById(`disponibles-${id}`).innerHTML = '<i style="color:red">Rango inválido</i>'; return; }
+
+            stateArmar[id].selectedCols = []; 
+            const divDisp = document.getElementById(`disponibles-${id}`); const divSel = document.getElementById(`seleccionadas-${id}`);
+            divDisp.innerHTML = ''; divSel.innerHTML = '<i>Aún no seleccionadas</i>';
+
+            if (jsonExcel.length === 0) { divDisp.innerHTML = '<i>No hay datos</i>'; return; }
+
+            const columnas = Object.keys(jsonExcel[0]);
+            columnas.forEach(col => {
+                const pill = document.createElement('div');
+                pill.className = 'col-pill'; pill.textContent = col;
+                pill.onclick = () => toggleColumna(id, col, pill);
+                divDisp.appendChild(pill);
             });
-            alert("Permisos actualizados."); window.closeModalUser();
-        };
+        }
 
-        // --- ESTRUCTURA ---
-        window.agregarTipoDoc = async () => { const v = document.getElementById('t-nom').value.trim().toUpperCase(); if(v) { tiposDoc.push(v); await updateDoc(doc(db, "workspaces", currentWS), { tiposDoc }); document.getElementById('t-nom').value = ""; } };
-        window.eliminarTipoDoc = async (i) => { tiposDoc.splice(i, 1); await updateDoc(doc(db, "workspaces", currentWS), { tiposDoc }); };
-        
-        window.guardarGerencia = async () => { const n = document.getElementById('g-nom').value.trim(); if(n) await addDoc(collection(db, "Gerencias"), { nombre: n, wsId: currentWS }); document.getElementById('g-nom').value = ""; };
-        window.guardarDepto = async () => { const g = document.getElementById('d-ger-sel').value, n = document.getElementById('d-nom').value.trim(); if(g && n) await addDoc(collection(db, "Departamentos"), { nombre: n, gerencia: g, wsId: currentWS }); document.getElementById('d-nom').value = ""; };
+        function toggleColumna(id, colName, pillElement) {
+            const divDisp = document.getElementById(`disponibles-${id}`); const divSel = document.getElementById(`seleccionadas-${id}`);
+            const isSelected = pillElement.classList.contains('selected');
 
-        // --- HELPERS ---
-        window.actualizarDeptos = (ger) => { const filtered = allDeps.filter(d => d.gerencia === ger); let h = "<option value=''>-- Seleccionar --</option>"; filtered.forEach(d => h += `<option value="${d.nombre}">${d.nombre}</option>`); document.getElementById('sol-dep').innerHTML = h; };
-        window.actualizarDeptosEdicion = (ger) => { const filtered = allDeps.filter(d => d.gerencia === ger); let h = "<option value=''>-- Seleccionar --</option>"; filtered.forEach(d => h += `<option value="${d.nombre}">${d.nombre}</option>`); document.getElementById('edit-user-dep').innerHTML = h; };
-        
-        window.del = async (c, id) => { if(confirm("¿Eliminar este registro permanentemente?")) await deleteDoc(doc(db, c, id)); };
-        window.logout = () => signOut(auth).then(() => location.reload());
+            if (isSelected) {
+                pillElement.classList.remove('selected'); divDisp.appendChild(pillElement); 
+                stateArmar[id].selectedCols = stateArmar[id].selectedCols.filter(c => c !== colName);
+            } else {
+                pillElement.classList.add('selected'); divSel.appendChild(pillElement); 
+                stateArmar[id].selectedCols.push(colName);
+            }
+            if (stateArmar[id].selectedCols.length === 0) divSel.innerHTML = '<i>Aún no seleccionadas</i>';
+            else if (divSel.querySelector('i')) divSel.querySelector('i').remove();
+        }
 
+        // Nueva función para añadir espacios vacíos
+        function agregarColumnaVacia(id) {
+            const divSel = document.getElementById(`seleccionadas-${id}`);
+            if (divSel.querySelector('i')) divSel.querySelector('i').remove();
+            
+            // Creamos un ID único para identificar internamente este espacio vacío
+            const uniqueId = '__EMPTY__' + Date.now() + Math.floor(Math.random() * 1000);
+            stateArmar[id].selectedCols.push(uniqueId);
+            
+            const pill = document.createElement('div');
+            pill.className = 'col-pill selected empty-pill';
+            pill.textContent = '[ Espacio Vacío ]';
+            
+            // Al hacer clic en un espacio vacío, simplemente se elimina
+            pill.onclick = () => {
+                pill.remove();
+                stateArmar[id].selectedCols = stateArmar[id].selectedCols.filter(c => c !== uniqueId);
+                if (stateArmar[id].selectedCols.length === 0) divSel.innerHTML = '<i>Aún no seleccionadas</i>';
+            };
+            
+            divSel.appendChild(pill);
+        }
+
+        document.getElementById('btnGenerarArmado').addEventListener('click', function() {
+            const keysIds = Object.keys(stateArmar);
+            if (keysIds.length === 0) return alert("Añade al menos un archivo.");
+
+            let unificados = []; let masterHeadersRaw = []; let columnasCount = 0;
+
+            // Extraer cabeceras maestras
+            for (let id of keysIds) {
+                if (stateArmar[id].selectedCols.length > 0) {
+                    masterHeadersRaw = stateArmar[id].selectedCols; 
+                    columnasCount = masterHeadersRaw.length; 
+                    break;
+                }
+            }
+            if (columnasCount === 0) return alert("Selecciona al menos una columna en el archivo principal.");
+
+            // Limpiamos los nombres de las cabeceras por si el archivo maestro tiene "Espacios vacíos"
+            let masterHeaders = masterHeadersRaw.map((h, index) => h.startsWith('__EMPTY__') ? `Columna_Vacía_${index + 1}` : h);
+
+            for (let id of keysIds) {
+                const st = stateArmar[id]; const colsLocales = st.selectedCols;
+                if (colsLocales.length === 0) continue; 
+
+                const nombreHoja = document.getElementById(`hojaArmar-${id}`).value;
+                const opts = getSheetJsOptions(document.getElementById(`rangoArmar-${id}`).value);
+                const jsonData = XLSX.utils.sheet_to_json(st.workbook.Sheets[nombreHoja], opts);
+
+                jsonData.forEach(filaOriginal => {
+                    let nuevaFila = { "Hoja Origen": nombreHoja };
+                    
+                    for (let i = 0; i < columnasCount; i++) {
+                        const colNameLocal = colsLocales[i];
+                        const headerFinal = masterHeaders[i];
+
+                        // Si la columna elegida no es un espacio vacío y existe en la fila
+                        if (colNameLocal !== undefined && !colNameLocal.startsWith('__EMPTY__') && filaOriginal[colNameLocal] !== undefined) {
+                            nuevaFila[headerFinal] = filaOriginal[colNameLocal];
+                        } else {
+                            // Si es un "Espacio Vacío", o no se seleccionó esa posición
+                            nuevaFila[headerFinal] = ""; 
+                        }
+                    }
+                    unificados.push(nuevaFila);
+                });
+            }
+
+            if (unificados.length === 0) return alert("Sin datos para unificar.");
+            const nuevoWorkbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(nuevoWorkbook, XLSX.utils.json_to_sheet(unificados), "Unificada");
+            XLSX.writeFile(nuevoWorkbook, "Excel_Unificado.xlsx");
+        });
+
+        crearBloqueArmado();
     </script>
 </body>
 </html>
