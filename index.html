@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SGC - Mi Espacio de Gestión</title>
+    <title>SGC - Sistema de Gestión de Calidad (Multi-Espacio)</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
@@ -21,58 +21,74 @@
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Inter', sans-serif; }
         body { background: var(--bg); color: #1e293b; height: 100vh; display: flex; overflow: hidden; }
 
-        /* Login Screen */
+        /* Pantallas de Acceso */
         #login-screen { position: fixed; inset: 0; background: var(--sidebar); display: flex; align-items: center; justify-content: center; z-index: 5000; }
-        .login-box { background: var(--white); padding: 40px; border-radius: 24px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
-        .btn-google { background: #fff; color: #444; width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; }
-        .btn-google:hover { background: #f5f5f5; }
-
-        /* Workspace Setup Modal */
-        #setup-screen { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9); display: none; align-items: center; justify-content: center; z-index: 6000; }
+        #setup-screen { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); display: none; align-items: center; justify-content: center; z-index: 6000; }
+        
+        .login-box { background: var(--white); padding: 40px; border-radius: 24px; max-width: 420px; width: 90%; text-align: center; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); }
+        .btn-google { background: #fff; color: #444; width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.2s; margin-top: 20px; }
+        .btn-google:hover { background: #f1f5f9; }
 
         /* Sidebar */
-        .sidebar { width: 280px; background: var(--sidebar); color: white; display: none; flex-direction: column; padding: 20px; }
-        .nav-link { display: flex; align-items: center; padding: 12px; color: #94a3b8; border: none; background: none; cursor: pointer; width: 100%; border-radius: 12px; margin-bottom: 5px; font-size: 14px; transition: 0.3s; }
+        .sidebar { width: 280px; background: var(--sidebar); color: white; display: none; flex-direction: column; padding: 20px; border-right: 1px solid rgba(255,255,255,0.1); }
+        .nav-link { display: flex; align-items: center; padding: 12px; color: #94a3b8; border: none; background: none; cursor: pointer; width: 100%; border-radius: 12px; margin-bottom: 5px; transition: 0.3s; font-size: 14px; text-align: left; }
         .nav-link:hover { background: rgba(255,255,255,0.05); color: white; }
-        .nav-link.active { background: var(--accent); color: white; }
+        .nav-link.active { background: var(--accent); color: white; font-weight: 600; }
         .nav-link span { margin-right: 12px; }
 
         /* Main Content */
         .main { flex: 1; padding: 30px; overflow-y: auto; display: none; }
         .section { display: none; }
         .section.active { display: block; }
-        .card { background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
 
-        /* Grid System */
+        /* UI Elements */
+        .card { background: white; padding: 25px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+        .grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; }
         
-        input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 15px; font-size: 14px; }
+        input, select, textarea { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; margin-bottom: 15px; font-size: 14px; outline:none; }
         label { font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 6px; display: block; }
 
-        .btn { padding: 12px 20px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .btn { padding: 12px 20px; border-radius: 10px; border: none; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: 0.2s; font-size: 13px; }
         .btn-primary { background: var(--primary); color: white; }
         .btn-success { background: var(--success); color: white; }
-        
-        /* Table */
+        .btn-ghost { background: #f1f5f9; color: #475569; }
+
+        /* Tablas */
         .table-responsive { overflow-x: auto; width: 100%; }
         table { width: 100%; border-collapse: collapse; }
-        th { text-align: left; padding: 15px; background: #f8fafc; border-bottom: 2px solid var(--border); font-size: 11px; color: #64748b; }
+        th { text-align: left; padding: 15px; background: #f8fafc; border-bottom: 2px solid var(--border); font-size: 11px; color: #64748b; text-transform: uppercase; }
         td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
 
-        #loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.8); z-index: 9999; display: none; align-items: center; justify-content: center; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        /* Modales */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); display: none; align-items: center; justify-content: center; z-index: 4000; backdrop-filter: blur(4px); }
+        .modal-content { background: white; width: 95%; max-width: 1100px; height: 85vh; border-radius: 24px; display: grid; grid-template-columns: 1fr 350px; overflow: hidden; }
+
+        /* Pasos de Flujo */
+        .step-container { display: flex; justify-content: space-between; margin: 20px 0; position: relative; }
+        .step-container::before { content: ''; position: absolute; top: 12px; left: 0; width: 100%; height: 2px; background: #e2e8f0; z-index: 1; }
+        .step { position: relative; z-index: 2; text-align: center; flex: 1; }
+        .step-dot { width: 25px; height: 25px; background: white; border: 3px solid #e2e8f0; border-radius: 50%; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 800; }
+        .step.active .step-dot { border-color: var(--primary); background: var(--primary); color: white; }
+        .step.completed .step-dot { background: var(--success); border-color: var(--success); color: white; }
+
+        #loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 9999; display: none; align-items: center; justify-content: center; flex-direction: column; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div id="loading-overlay"><div class="spinner"></div></div>
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p style="margin-top:10px; font-weight:700; color:var(--primary)">Sincronizando Espacio...</p>
+    </div>
 
     <div id="login-screen">
         <div class="login-box">
-            <h2 style="color:var(--primary); margin-bottom: 10px;">Bienvenido al SGC</h2>
-            <p style="color:#64748b; margin-bottom: 30px; font-size: 14px;">Inicia sesión para acceder a tu espacio personal.</p>
+            <h1 style="color:var(--primary); font-weight:800;">SGC - GSCI</h1>
+            <p style="color:#64748b; margin-top:10px;">Sistema de Gestión Multi-Espacio</p>
             <button class="btn-google" id="btn-login-google">
                 <img src="https://upload.wikimedia.org/wikipedia/commons/5/53/Google_%22G%22_Logo.svg" width="18">
                 Continuar con Google
@@ -82,92 +98,136 @@
 
     <div id="setup-screen">
         <div class="login-box">
-            <h3>Configura tu Espacio</h3>
-            <p style="font-size: 12px; margin-bottom: 20px;">Dale un nombre a tu sección del sistema.</p>
-            <input type="text" id="setup-workspace-name" placeholder="Ej: Mi Empresa S.A.">
-            <button class="btn btn-primary" style="width: 100%;" id="btn-save-setup">Comenzar</button>
+            <h2 style="color:var(--primary)">Crea tu Espacio de Trabajo</h2>
+            <p style="font-size:13px; color:#64748b; margin-bottom:20px;">Define el nombre de tu organización o proyecto.</p>
+            <label>Nombre del Espacio</label>
+            <input type="text" id="setup-ws-name" placeholder="Ej: Mi Empresa de Logística">
+            <button class="btn btn-primary" style="width:100%" id="btn-confirm-setup">ESTABLECER ESPACIO</button>
         </div>
     </div>
 
     <aside class="sidebar" id="sidebar">
         <div style="padding: 10px 0 30px;">
-            <h2 id="display-workspace-name" style="font-size: 18px; font-weight: 800; color:var(--accent);">ESPACIO</h2>
-            <p id="user-email" style="font-size: 10px; color: #94a3b8;"></p>
+            <h2 id="display-ws-name" style="font-weight:800; color:var(--accent); text-transform:uppercase; font-size:16px;">WORKSPACE</h2>
+            <p id="display-user-email" style="font-size:10px; color:#94a3b8;"></p>
         </div>
         <nav style="flex:1">
             <button class="nav-link active" onclick="cambiarVista('sec-dash', this)"><span class="material-icons-round">dashboard</span> Dashboard</button>
+            <button class="nav-link" onclick="cambiarVista('sec-hist', this)"><span class="material-icons-round">history</span> Mis Solicitudes</button>
+            <button class="nav-link" onclick="cambiarVista('sec-crear', this)"><span class="material-icons-round">add_box</span> Nueva Solicitud</button>
+            <button class="nav-link" onclick="cambiarVista('sec-gest', this)"><span class="material-icons-round">fact_check</span> Gestión Administrativa</button>
+            <button class="nav-link" onclick="cambiarVista('sec-audit', this)"><span class="material-icons-round">calendar_month</span> Auditorías</button>
             <button class="nav-link" onclick="cambiarVista('sec-listado', this)"><span class="material-icons-round">library_books</span> Listado Maestro</button>
-            <button class="nav-link" onclick="cambiarVista('sec-audit', this)"><span class="material-icons-round">event</span> Auditorías</button>
-            <button class="nav-link" onclick="cambiarVista('sec-users', this)"><span class="material-icons-round">group_add</span> Colaboradores</button>
+            
+            <div style="border-top:1px solid rgba(255,255,255,0.1); margin-top:20px; padding-top:20px;">
+                <p style="font-size:9px; color:#64748b; font-weight:800; margin-left:12px; margin-bottom:10px;">CONFIGURACIÓN</p>
+                <button class="nav-link" onclick="cambiarVista('sec-colab', this)"><span class="material-icons-round">group_add</span> Colaboradores</button>
+                <button class="nav-link" onclick="cambiarVista('sec-struct', this)"><span class="material-icons-round">settings</span> Estructura</button>
+            </div>
         </nav>
-        <button onclick="logout()" class="nav-link" style="color:var(--danger);"><span class="material-icons-round">logout</span> Cerrar Sesión</button>
+        <button onclick="logout()" class="nav-link" style="color:var(--danger);"><span class="material-icons-round">logout</span> Salir</button>
     </aside>
 
     <main class="main" id="main">
+        
         <section id="sec-dash" class="section active">
-            <h1>Panel Principal</h1>
-            <div class="grid-3" style="margin-top:20px;">
-                <div class="card">
-                    <label>Documentos Vigentes</label>
-                    <h2 id="count-docs">0</h2>
-                </div>
-                <div class="card">
-                    <label>Auditorías Pendientes</label>
-                    <h2 id="count-audit">0</h2>
-                </div>
+            <h1>Panel de Control</h1>
+            <div class="grid-4" style="margin-top:20px;">
+                <div class="card" style="border-left:5px solid var(--primary)"><label>Solicitudes Totales</label><h2 id="dash-tot">0</h2></div>
+                <div class="card" style="border-left:5px solid var(--warning)"><label>En Proceso</label><h2 id="dash-pend">0</h2></div>
+                <div class="card" style="border-left:5px solid var(--success)"><label>Aprobadas</label><h2 id="dash-ok">0</h2></div>
+                <div class="card" style="border-left:5px solid var(--danger)"><label>Auditorías Planificadas</label><h2 id="dash-audit">0</h2></div>
             </div>
         </section>
 
-        <section id="sec-users" class="section">
-            <h1>Colaboradores e Invitaciones</h1>
-            <div class="grid-2" style="margin-top:20px;">
-                <div class="card">
-                    <h3>Invitar Colaborador</h3>
-                    <p style="font-size: 12px; color: #64748b; margin-bottom: 15px;">La persona podrá acceder a este espacio con su cuenta de Google.</p>
-                    <label>Correo Electrónico</label>
-                    <input type="email" id="invite-email" placeholder="compañero@empresa.com">
-                    <button class="btn btn-primary" id="btn-send-invite">Enviar Invitación</button>
+        <section id="sec-crear" class="section">
+            <div class="card" style="max-width:800px; margin:auto;">
+                <h2>Nueva Solicitud de Documento</h2>
+                <div class="grid-2">
+                    <div><label>Acción</label><select id="sol-accion"><option>Creación</option><option>Modificación</option><option>Inactivación</option></select></div>
+                    <div><label>Tipo Documento</label><select id="sol-tipo-doc"></select></div>
                 </div>
-                <div class="card">
-                    <h3>Personas con Acceso</h3>
-                    <div class="table-responsive">
-                        <table>
-                            <thead><tr><th>Email</th><th>Rol</th><th>Acción</th></tr></thead>
-                            <tbody id="tbody-colaboradores"></tbody>
-                        </table>
-                    </div>
+                <label>Título del Documento</label><input type="text" id="sol-tit">
+                <div class="grid-2">
+                    <div><label>Gerencia</label><select id="sol-ger"></select></div>
+                    <div><label>Departamento</label><select id="sol-dep"></select></div>
                 </div>
+                <label>Motivo / Justificación</label><textarea id="sol-motivo" rows="3"></textarea>
+                <label>Archivo Adjunto</label><input type="file" id="sol-file">
+                <button class="btn btn-primary" style="width:100%" id="btnSendSol">REGISTRAR EN EL FLUJO</button>
             </div>
         </section>
 
-        <section id="sec-listado" class="section">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h1>Listado Maestro</h1>
-                <button class="btn btn-success" onclick="abrirModalDocumento()">+ Nuevo Documento</button>
-            </div>
-            <div class="card" style="margin-top:20px; padding:0;">
+        <section id="sec-gest" class="section">
+            <h1>Bandeja de Gestión</h1>
+            <div class="card" style="padding:0; margin-top:20px;">
                 <div class="table-responsive">
                     <table>
-                        <thead><tr><th>Código</th><th>Nombre</th><th>Versión</th><th>Estatus</th></tr></thead>
-                        <tbody id="tbody-maestro"></tbody>
+                        <thead><tr><th>ID</th><th>Usuario</th><th>Título</th><th>Estado</th><th>Gestión</th></tr></thead>
+                        <tbody id="tbody-gestionar"></tbody>
                     </table>
                 </div>
             </div>
         </section>
+
+        <section id="sec-colab" class="section">
+            <h1>Mi Equipo de Trabajo</h1>
+            <div class="grid-2" style="margin-top:20px;">
+                <div class="card">
+                    <h3>Añadir Colaborador</h3>
+                    <label>Email de la cuenta Google</label>
+                    <input type="email" id="invite-email" placeholder="compañero@empresa.com">
+                    <button class="btn btn-primary" id="btn-send-invite">DAR ACCESO AL ESPACIO</button>
+                </div>
+                <div class="card" style="padding:0;">
+                    <table>
+                        <thead><tr><th>Nombre</th><th>Email</th><th>Rol</th></tr></thead>
+                        <tbody id="tbody-colabs"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
     </main>
 
+    <div class="modal-overlay" id="modal">
+        <div class="modal-content">
+            <div style="padding:30px; overflow-y:auto;">
+                <h2 id="m-tit">Detalles de Solicitud</h2>
+                <div class="step-container">
+                    <div class="step" id="s1"><div class="step-dot">1</div><label>Elab.</label></div>
+                    <div class="step" id="s2"><div class="step-dot">2</div><label>Verif.</label></div>
+                    <div class="step" id="s3"><div class="step-dot">3</div><label>Ger.</label></div>
+                    <div class="step" id="s4"><div class="step-dot">4</div><label>SGC</label></div>
+                </div>
+                <div id="m-data"></div>
+                <div id="m-actions" style="margin-top:20px; display:flex; gap:10px;">
+                    <button class="btn btn-success" onclick="firmarPaso()">Confirmar Firma</button>
+                    <button class="btn btn-ghost" onclick="closeModal()">Cerrar</button>
+                </div>
+            </div>
+            <div style="background:#f8fafc; border-left:1px solid #ddd; padding:20px;">
+                <h4>Bitácora Histórica</h4>
+                <div id="chat-box" style="height:400px; overflow-y:auto; margin-bottom:15px;"></div>
+                <div id="m-comment" contenteditable="true" style="background:white; border:1px solid #ddd; padding:10px; border-radius:8px; min-height:60px;"></div>
+                <button class="btn btn-primary" style="width:100%; margin-top:10px;" onclick="enviarComentario()">Enviar Mensaje</button>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
+        // --- INTEGRACIÓN FIREBASE ---
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, query, where, addDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, getDoc, updateDoc, setDoc, query, where, getDocs, arrayUnion, deleteDoc } from "https://www.gstatic.com/firebasejs/11.1.0/firebase-firestore.js";
 
         const firebaseConfig = {
-            apiKey: "TU_API_KEY",
-            authDomain: "TU_PROYECTO.firebaseapp.com",
-            projectId: "TU_PROYECTO",
-            storageBucket: "TU_PROYECTO.appspot.com",
-            messagingSenderId: "TU_SENDER_ID",
-            appId: "TU_APP_ID"
+            apiKey: "AIzaSyDHflRFI5xQjiRQDwZyfizelEilAE0TjXo",
+            authDomain: "sistemadegestion2-fd38e.firebaseapp.com",
+            projectId: "sistemadegestion2-fd38e",
+            storageBucket: "sistemadegestion2-fd38e.firebasestorage.app",
+            messagingSenderId: "871879438988",
+            appId: "1:871879438988:web:a3b9b63193879e8668c1a9"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -175,131 +235,175 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
+        // --- INTEGRACIÓN EMAILJS ---
+        const EMAIL_SERVICE_ID = "service_20sm1nj"; 
+        const EMAIL_TEMPLATE_ID = "template_60rn43d"; 
+        const EMAIL_PUBLIC_KEY = "0xTGvm-GEN3ZBckbY"; 
+        emailjs.init(EMAIL_PUBLIC_KEY);
+
+        // --- INTEGRACIÓN CLOUDINARY ---
+        const CLOUD_NAME = "df79cjklp";
+        const UPLOAD_PRESET = "sistema2";
+        const CLOUD_API_KEY = "359523523714913";
+
+        let currentWS = null;
         let userData = null;
-        let currentWorkspaceId = null;
+        let selectedId = null;
+        let selectedData = null;
 
-        // --- MANEJO DE AUTENTICACIÓN ---
-
-        document.getElementById('btn-login-google').onclick = () => {
-            signInWithPopup(auth, provider).catch(err => alert("Error al autenticar: " + err.message));
-        };
+        // --- GESTIÓN DE ACCESO ---
 
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 window.showLoading();
-                // Buscar si el usuario ya pertenece a un espacio o tiene el propio
+                document.getElementById('login-screen').style.display = 'none';
+                
                 const userRef = doc(db, "users", user.uid);
-                const userSnap = await getDoc(userRef);
+                const snapUser = await getDoc(userRef);
 
-                if (!userSnap.exists()) {
-                    // Nuevo usuario: Mostrar pantalla de configuración de espacio
-                    document.getElementById('login-screen').style.display = 'none';
-                    document.getElementById('setup-screen').style.display = 'flex';
-                    userData = { uid: user.uid, email: user.email };
-                } else {
-                    userData = userSnap.data();
-                    currentWorkspaceId = userData.workspaceId;
+                if (snapUser.exists()) {
+                    userData = snapUser.data();
+                    currentWS = userData.wsId;
                     initWorkspace();
+                } else {
+                    // Buscar si hay invitación por correo
+                    const qInv = query(collection(db, "invitations"), where("email", "==", user.email.toLowerCase()));
+                    const snapInv = await getDocs(qInv);
+                    
+                    if (!snapInv.empty) {
+                        const invData = snapInv.docs[0].data();
+                        currentWS = invData.wsId;
+                        userData = { uid: user.uid, email: user.email, wsId: currentWS, role: "Colaborador", nombre: user.displayName };
+                        await setDoc(userRef, userData);
+                        initWorkspace();
+                    } else {
+                        document.getElementById('setup-screen').style.display = 'flex';
+                    }
                 }
                 window.hideLoading();
             } else {
                 document.getElementById('login-screen').style.display = 'flex';
-                document.getElementById('sidebar').style.display = 'none';
-                document.getElementById('main').style.display = 'none';
             }
         });
 
-        // --- CONFIGURACIÓN DEL ESPACIO ---
+        document.getElementById('btn-login-google').onclick = () => signInWithPopup(auth, provider);
 
-        document.getElementById('btn-save-setup').onclick = async () => {
-            const wsName = document.getElementById('setup-workspace-name').value.trim();
-            if (!wsName) return alert("Ponle un nombre a tu espacio.");
-
-            window.showLoading();
-            const wsId = "WS-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+        document.getElementById('btn-confirm-setup').onclick = async () => {
+            const wsName = document.getElementById('setup-ws-name').value.trim();
+            if (!wsName) return alert("Define un nombre.");
             
-            // 1. Crear el Workspace
-            await setDoc(doc(db, "workspaces", wsId), {
-                name: wsName,
-                owner: userData.uid,
-                createdAt: new Date().toISOString()
-            });
+            window.showLoading();
+            const wsId = "WS-" + Date.now();
+            const user = auth.currentUser;
 
-            // 2. Actualizar el usuario con su nuevo Workspace
-            await setDoc(doc(db, "users", userData.uid), {
-                ...userData,
-                workspaceId: wsId,
-                role: "Owner"
-            });
+            await setDoc(doc(db, "workspaces", wsId), { name: wsName, owner: user.uid, createdAt: new Date().toISOString() });
+            userData = { uid: user.uid, email: user.email, wsId: wsId, role: "Admin", nombre: user.displayName };
+            await setDoc(doc(db, "users", user.uid), userData);
 
-            currentWorkspaceId = wsId;
+            currentWS = wsId;
             document.getElementById('setup-screen').style.display = 'none';
             initWorkspace();
             window.hideLoading();
         };
 
-        // --- INICIALIZACIÓN DEL ESPACIO DE DATOS ---
-
         async function initWorkspace() {
-            const wsSnap = await getDoc(doc(db, "workspaces", currentWorkspaceId));
-            const wsData = wsSnap.data();
-
-            document.getElementById('display-workspace-name').innerText = wsData.name;
-            document.getElementById('user-email').innerText = userData.email;
+            const wsSnap = await getDoc(doc(db, "workspaces", currentWS));
+            document.getElementById('display-ws-name').innerText = wsSnap.data().name;
+            document.getElementById('display-user-email').innerText = userData.email;
             document.getElementById('sidebar').style.display = 'flex';
             document.getElementById('main').style.display = 'block';
-
-            cargarDatosAislados();
+            cargarApp();
         }
 
-        function cargarDatosAislados() {
-            // Escuchar Listado Maestro filtrado por Workspace
-            const qMaestro = query(collection(db, "solicitudes"), where("workspaceId", "==", currentWorkspaceId));
-            onSnapshot(qMaestro, (snapshot) => {
-                const tbody = document.getElementById('tbody-maestro');
-                tbody.innerHTML = "";
-                snapshot.forEach(doc => {
-                    const d = doc.data();
-                    tbody.innerHTML += `<tr><td>${d.codigo}</td><td>${d.nombre}</td><td>${d.version}</td><td>${d.status}</td></tr>`;
+        // --- FUNCIONES DE CARGA Y GESTIÓN ---
+
+        function cargarApp() {
+            const q = (c) => query(collection(db, c), where("wsId", "==", currentWS));
+
+            // Sincronización de Dashboard y Solicitudes
+            onSnapshot(q("Solicitudes"), s => {
+                let html = "", pend = 0, ok = 0;
+                s.forEach(d => {
+                    const sol = d.data(); sol.id = d.id;
+                    if(sol.estado === "Aprobado Final") ok++; else pend++;
+                    html += `<tr><td>${sol.customId || 'SOL'}</td><td>${sol.solicitante}</td><td>${sol.titulo}</td><td>${sol.estado}</td><td><button class="btn btn-ghost" onclick="verDetalle('${sol.id}')">Ver</button></td></tr>`;
                 });
-                document.getElementById('count-docs').innerText = snapshot.size;
+                document.getElementById('tbody-gestionar').innerHTML = html;
+                document.getElementById('dash-tot').innerText = s.size;
+                document.getElementById('dash-pend').innerText = pend;
+                document.getElementById('dash-ok').innerText = ok;
             });
 
-            // Escuchar Colaboradores
-            const qUsers = query(collection(db, "users"), where("workspaceId", "==", currentWorkspaceId));
-            onSnapshot(qUsers, (snapshot) => {
-                const tbody = document.getElementById('tbody-colaboradores');
-                tbody.innerHTML = "";
-                snapshot.forEach(doc => {
-                    const u = doc.data();
-                    tbody.innerHTML += `<tr><td>${u.email}</td><td>${u.role}</td><td>-</td></tr>`;
+            // Colaboradores
+            onSnapshot(q("users"), s => {
+                let html = "";
+                s.forEach(d => {
+                    const u = d.data();
+                    html += `<tr><td>${u.nombre}</td><td>${u.email}</td><td><span class="badge badge-success">${u.role}</span></td></tr>`;
                 });
+                document.getElementById('tbody-colabs').innerHTML = html;
             });
         }
 
-        // --- INVITACIONES ---
+        // --- CARGA DE ARCHIVOS A CLOUDINARY ---
+
+        async function uploadCloudinary(file) {
+            const formData = new FormData();
+            formData.append("file", file);
+            formData.append("upload_preset", UPLOAD_PRESET);
+            formData.append("api_key", CLOUD_API_KEY);
+            try {
+                const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, { method: "POST", body: formData });
+                const data = await res.json();
+                return data.secure_url;
+            } catch (e) { return null; }
+        }
+
+        // --- ACCIONES GLOBALES ---
+
+        document.getElementById('btnSendSol').onclick = async () => {
+            const file = document.getElementById('sol-file').files[0];
+            window.showLoading();
+            let url = file ? await uploadCloudinary(file) : null;
+            
+            const data = {
+                wsId: currentWS,
+                titulo: document.getElementById('sol-tit').value,
+                accion: document.getElementById('sol-accion').value,
+                gerencia: document.getElementById('sol-ger').value,
+                solicitante: userData.nombre,
+                estado: "Pendiente Verificado",
+                idx: 1,
+                adjunto: url,
+                chat: [{u: "SISTEMA", m: "Solicitud iniciada.", t: new Date().toLocaleString()}]
+            };
+
+            await addDoc(collection(db, "Solicitudes"), data);
+            window.hideLoading();
+            alert("Solicitud registrada correctamente.");
+        };
 
         document.getElementById('btn-send-invite').onclick = async () => {
             const email = document.getElementById('invite-email').value.trim().toLowerCase();
-            if (!email) return;
-
-            // En un sistema real, aquí enviarías un email con EmailJS.
-            // Para la lógica de base de datos, simplemente "pre-autorizamos" el correo.
+            if(!email) return;
             window.showLoading();
-            // Esta es una invitación simplificada:
-            alert("Se ha registrado la invitación. Cuando " + email + " inicie sesión con Google, entrará a este espacio.");
+            await addDoc(collection(db, "invitations"), { email, wsId: currentWS, date: new Date().toISOString() });
             
-            // Guardamos la invitación para que el sistema sepa a qué espacio mover al invitado
-            await setDoc(doc(db, "invitations", email), {
-                workspaceId: currentWorkspaceId,
-                invitedBy: userData.email
-            });
-
-            document.getElementById('invite-email').value = "";
+            // Notificación vía EmailJS
+            emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, { to_email: email, from_name: userData.nombre });
+            
+            alert("Acceso concedido a " + email);
             window.hideLoading();
         };
 
-        // --- FUNCIONES DE NAVEGACIÓN ---
+        window.verDetalle = async (id) => {
+            selectedId = id;
+            const snap = await getDoc(doc(db, "Solicitudes", id));
+            selectedData = snap.data();
+            document.getElementById('m-tit').innerText = selectedData.titulo;
+            document.getElementById('chat-box').innerHTML = (selectedData.chat || []).map(c => `<div><b>${c.u}:</b> ${c.m}</div>`).join('');
+            document.getElementById('modal').style.display = 'flex';
+        };
 
         window.cambiarVista = (id, btn) => {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
@@ -308,8 +412,8 @@
             btn.classList.add('active');
         };
 
-        window.logout = () => signOut(auth);
-
+        window.logout = () => signOut(auth).then(() => location.reload());
+        window.closeModal = () => document.getElementById('modal').style.display = 'none';
         window.showLoading = () => document.getElementById('loading-overlay').style.display = 'flex';
         window.hideLoading = () => document.getElementById('loading-overlay').style.display = 'none';
 
