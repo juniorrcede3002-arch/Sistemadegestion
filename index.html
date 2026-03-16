@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@eamailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
@@ -76,11 +76,11 @@
         .btn-dark { background: #1e293b; color: white; }
         .btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
 
-        table { width: 100%; border-collapse: collapse; }
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
         th { text-align: left; padding: 15px; background: #f8fafc; border-bottom: 2px solid var(--border); font-size: 11px; color: #64748b; text-transform: uppercase; white-space: nowrap; }
         td { padding: 15px; border-bottom: 1px solid #f1f5f9; font-size: 13px; }
         
-        .table-responsive { overflow-x: auto; width: 100%; }
+        .table-responsive { overflow-x: auto; width: 100%; -webkit-overflow-scrolling: touch; }
 
         .badge { padding: 4px 10px; border-radius: 10px; font-size: 10px; font-weight: 700; text-transform: uppercase; white-space: nowrap; }
         .badge-info { background: #e0f2fe; color: #0369a1; }
@@ -91,7 +91,7 @@
 
         /* Switches & Permisos */
         .access-item { display: flex; align-items: center; justify-content: space-between; padding: 10px; background: #f8fafc; border-radius: 8px; margin-bottom: 5px; border: 1px solid #eee; }
-        .switch { position: relative; display: inline-block; width: 34px; height: 18px; }
+        .switch { position: relative; display: inline-block; width: 34px; height: 18px; flex-shrink: 0; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; inset: 0; background-color: #cbd5e1; transition: .4s; border-radius: 18px; }
         .slider:before { position: absolute; content: ""; height: 12px; width: 12px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
@@ -107,8 +107,8 @@
         .btn-icon-danger:hover { background: #fee2e2; }
 
         /* Modales */
-        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); display: none; align-items: center; justify-content: center; z-index: 4000; backdrop-filter: blur(4px); }
-        .modal-content { background: white; width: 95%; max-width: 1200px; height: 90vh; border-radius: 24px; display: grid; grid-template-columns: 1fr 380px; overflow: hidden; }
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.8); display: none; align-items: center; justify-content: center; z-index: 4000; backdrop-filter: blur(4px); padding: 10px; }
+        .modal-content { background: white; width: 100%; max-width: 1200px; height: 90vh; border-radius: 24px; display: grid; grid-template-columns: 1fr 380px; overflow: hidden; }
         
         #chat-box, #chat-box-audit { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px; margin-bottom: 10px; }
         .chat-msg { padding: 10px; background: white; border-radius: 8px; border-left: 4px solid var(--accent); box-shadow: 0 1px 2px rgba(0,0,0,0.05); font-size: 12px; word-break: break-word; }
@@ -141,36 +141,47 @@
         .checkbox-list { border: 1px solid var(--border); border-radius: 8px; max-height: 140px; overflow-y: auto; padding: 10px; background: white; margin-bottom: 15px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
         .checkbox-list label { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 500; text-transform: none; color: #334155; margin-bottom: 6px; cursor: pointer; letter-spacing: 0; padding: 4px; border-radius: 6px; transition: background 0.2s; }
         .checkbox-list label:hover { background: #f1f5f9; }
-        .checkbox-list input[type="checkbox"] { width: 16px; height: 16px; margin: 0; cursor: pointer; accent-color: var(--primary); }
+        .checkbox-list input[type="checkbox"] { width: 16px; height: 16px; margin: 0; cursor: pointer; accent-color: var(--primary); flex-shrink: 0; }
 
         #loading-overlay { position: fixed; inset: 0; background: rgba(255,255,255,0.9); z-index: 6000; display: none; align-items: center; justify-content: center; flex-direction: column; }
         .spinner { width: 40px; height: 40px; border: 4px solid #e2e8f0; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .file-link { color: var(--accent); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; }
+        .file-link { color: var(--accent); text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 5px; word-break: break-all; }
         .file-link:hover { text-decoration: underline; }
         
         .search-bar { background: #f1f5f9; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px 15px; width: 100%; max-width: 350px; font-size: 13px; outline: none; margin-bottom: 0; }
         .search-bar:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1); }
 
+        /* =======================================
+           DISEÑO RESPONSIVO (MÓVILES Y TABLETS)
+           ======================================= */
         @media (max-width: 768px) {
             body { flex-direction: column; overflow-y: auto; }
             .sidebar { position: fixed !important; left: -300px; top: 0; bottom: 0; z-index: 9000; transition: left 0.3s ease; box-shadow: 5px 0 15px rgba(0,0,0,0.2); }
             .sidebar.open { left: 0; }
             .mobile-header { display: flex; }
             .main { padding: 15px; overflow-y: visible; }
-            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; gap: 15px; }
-            .modal-content { display: flex; flex-direction: column; height: 95vh; max-height: 95vh; overflow-y: auto; width: 95%; padding: 0; }
+            
+            /* Forzar a 1 columna en celulares */
+            .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr !important; gap: 15px; }
+            
+            .modal-content { display: flex !important; flex-direction: column !important; height: 95vh; max-height: 95vh; overflow-y: auto; width: 100%; padding: 0; border-radius: 16px; }
             .modal-main { padding: 20px; border-right: none; border-bottom: 1px solid var(--border); flex: none; height: auto; }
             .modal-side { border-left: none; height: auto; }
             #chat-box, #chat-box-audit { height: 350px; }
+            
             .step label { font-size: 8px; line-height: 1.2; display: inline-block; padding: 0 2px; }
             .step-container::before { top: 10px; }
             .step-dot { width: 20px; height: 20px; font-size: 9px; border-width: 2px; }
+            
             h1 { font-size: 22px; }
             .card { padding: 15px; }
-            .btn { width: 100%; justify-content: center; }
+            .btn { width: 100%; justify-content: center; margin-bottom: 5px; }
             .search-bar { max-width: 100%; margin-bottom: 10px; }
+            
+            #sec-listado > div:first-child, #sec-hist > div:first-child, #sec-gest > div:first-child { flex-direction: column; align-items: stretch; }
+            #sec-listado > div:first-child > div, #sec-hist > .card > div:first-child, #sec-gest > .card > div:first-child { flex-direction: column; align-items: stretch; width: 100%; }
         }
     </style>
 </head>
@@ -216,7 +227,7 @@
     <div id="corp-screen" style="display:none;">
         <div class="auth-box" style="max-width: 700px;">
             <h2 style="color:var(--primary); margin-bottom: 10px;">¡Bienvenido a SGC PRO!</h2>
-            <p style="color:#64748b; font-size:13px; margin-bottom:30px;">Parece que eres nuevo. Para continuar, crea un nuevo entorno para tu empresa ou únete a uno existente usando un código de invitación.</p>
+            <p style="color:#64748b; font-size:13px; margin-bottom:30px;">Parece que eres nuevo. Para continuar, crea un nuevo entorno para tu empresa o únete a uno existente usando un código de invitación.</p>
             
             <div class="grid-2">
                 <div style="background:#f8fafc; padding:20px; border-radius:12px; border:1px solid var(--border);">
@@ -231,7 +242,7 @@
                 </div>
             </div>
             
-            <button onclick="window.cerrarSesionGoogle()" style="background:none; border:none; color:var(--danger); font-size:12px; font-weight:700; cursor:pointer; margin-top:20px; text-decoration:underline;">Cancelar e Iniciar con otra cuenta</button>
+            <button onclick="window.cerrarSesion()" style="background:none; border:none; color:var(--danger); font-size:12px; font-weight:700; cursor:pointer; margin-top:20px; text-decoration:underline;">Cancelar e Iniciar con otra cuenta</button>
         </div>
     </div>
 
@@ -282,7 +293,7 @@
         <div style="background: rgba(255,255,255,0.05); padding: 15px; border-radius: 16px;">
             <p id="curr-name" style="font-weight: 700; font-size: 13px;"></p>
             <p id="curr-ger" style="font-size: 10px; color: #94a3b8; margin-top:5px;"></p>
-            <button onclick="window.cerrarSesionGoogle()" style="background:none; border:none; color:var(--danger); font-size:11px; font-weight:700; cursor:pointer; margin-top:10px; display:flex; align-items:center; gap:5px; padding:0;">
+            <button onclick="window.cerrarSesion()" style="background:none; border:none; color:var(--danger); font-size:11px; font-weight:700; cursor:pointer; margin-top:10px; display:flex; align-items:center; gap:5px; padding:0;">
                 <span class="material-icons-round" style="font-size:16px;">logout</span> Salir
             </button>
         </div>
@@ -417,8 +428,8 @@
                     </label>
                     <p style="font-size:10px; color:#64748b; margin-top:5px; margin-bottom:10px;">Selecciona usuarios de la plataforma para notificarles sobre este documento.</p>
                     
-                    <div style="display:flex; gap:10px; margin-bottom:10px;">
-                        <select id="sol-involucrado-sel" style="margin:0; flex:1; background:white;">
+                    <div style="display:flex; flex-wrap:wrap; gap:10px; margin-bottom:10px;">
+                        <select id="sol-involucrado-sel" style="margin:0; flex:1; min-width: 200px; background:white;">
                             <option value="">-- Seleccionar Usuario --</option>
                         </select>
                         <button type="button" class="btn btn-info" style="padding: 4px 15px;" onclick="window.addInvolucradoList()"><span class="material-icons-round" style="font-size:16px; margin-right:4px;">person_add</span> Añadir</button>
@@ -484,9 +495,9 @@
                     <option value="Aprobado Final">Solo Aprobados</option>
                     <option value="Cancelado">Rechazados / Anulados</option>
                 </select>
-                <button class="btn btn-success" onclick="window.descargarExcelFiltrado(true, false)" style="padding: 8px 15px;"><span class="material-icons-round" style="font-size:16px;">download</span> Exportar Vista Normal</button>
-                <button id="btn-export-admin" class="btn btn-dark" onclick="window.descargarExcelFiltrado(true, true)" style="display:none; padding: 8px 15px; gap:5px;">
-                    <span class="material-icons-round" style="font-size:16px;">insights</span> Excel Completo (Con Tiempos)
+                <button class="btn btn-success" onclick="window.descargarExcelFiltrado(true, false)" style="padding: 8px 15px; margin-bottom:5px;"><span class="material-icons-round" style="font-size:16px;">download</span> Exportar Vista Normal</button>
+                <button id="btn-export-admin" class="btn btn-dark" onclick="window.descargarExcelFiltrado(true, true)" style="display:none; padding: 8px 15px; gap:5px; margin-bottom:5px;">
+                    <span class="material-icons-round" style="font-size:16px;">insights</span> Excel Completo (Tiempos)
                 </button>
             </div>
 
@@ -530,11 +541,11 @@
                     </h1>
                     <p style="color:#64748b;">Programación anual y notificaciones automáticas.</p>
                 </div>
-                <div style="display:flex; gap:10px; align-items:center; background:white; padding:8px 15px; border-radius:12px; border:1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                <div style="display:flex; gap:10px; align-items:center; background:white; padding:8px 15px; border-radius:12px; border:1px solid var(--border); box-shadow: 0 2px 4px rgba(0,0,0,0.02); flex-wrap:wrap;">
                     <label style="margin:0; font-size:12px;">Año:</label>
                     <select id="aud-year-select" style="margin:0; width:130px; padding:8px; border:none; font-weight:bold; color:var(--primary); background:transparent; cursor:pointer;" onchange="window.cambiarAnioAuditoria(this.value)">
                     </select>
-                    <div style="width:1px; height:20px; background:var(--border); margin:0 5px;"></div>
+                    <div style="width:1px; height:20px; background:var(--border); margin:0 5px; display:none;"></div>
                     <button class="btn btn-info" id="btn-config-plan" style="display:none; padding:8px 12px; font-size:11px;" onclick="window.toggleAuditHeaderForm()">
                         <span class="material-icons-round" style="font-size:14px;">settings</span> Configurar Plan
                     </button>
@@ -545,7 +556,7 @@
             </div>
 
             <div id="audit-header-view" class="card" style="margin-bottom:20px; border-top: 4px solid var(--primary); display:none;">
-               <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px; border-bottom:1px solid var(--border); padding-bottom:10px;">
+               <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:15px; border-bottom:1px solid var(--border); padding-bottom:10px; flex-wrap:wrap;">
                    <h3 style="color:var(--sidebar); margin:0;">Plan Anual de Auditorías <span id="view-year-label" style="color:var(--primary);"></span></h3>
                    <div style="text-align:right;">
                        <span style="font-size:10px; color:#64748b; font-weight:800; text-transform:uppercase;">Última Modificación</span>
@@ -625,9 +636,9 @@
                     <input type="text" id="ah-extra-emails" placeholder="ej: asesor_externo@mail.com" style="margin-bottom:0;">
                 </div>
 
-                <div style="display:flex; gap:10px; margin-top:20px; padding-top:15px; border-top:1px solid var(--border);">
-                    <button class="btn btn-primary" onclick="window.saveAuditPlan()" style="flex:1;">GUARDAR ESTRUCTURA DEL PLAN</button>
-                    <button class="btn btn-ghost" onclick="window.toggleAuditHeaderForm()" style="flex:1;">CANCELAR EDICIÓN</button>
+                <div style="display:flex; gap:10px; margin-top:20px; padding-top:15px; border-top:1px solid var(--border); flex-wrap:wrap;">
+                    <button class="btn btn-primary" onclick="window.saveAuditPlan()" style="flex:1; min-width:200px;">GUARDAR ESTRUCTURA DEL PLAN</button>
+                    <button class="btn btn-ghost" onclick="window.toggleAuditHeaderForm()" style="flex:1; min-width:200px;">CANCELAR EDICIÓN</button>
                 </div>
             </div>
 
@@ -745,17 +756,19 @@
                         <div class="access-item" style="background:#e0f2fe; border-color:#bae6fd;"><span>Ver Cal. Auditoría (Visor)</span><label class="switch"><input type="checkbox" id="p-audit-ver"><span class="slider"></span></label></div>
                         <div class="access-item" style="background:#e0f2fe; border-color:#bae6fd;"><span>Admin Auditoría (Programar)</span><label class="switch"><input type="checkbox" id="p-audit-admin"><span class="slider"></span></label></div>
 
-                        <div class="access-item" style="grid-column:span 2; border:1px dashed var(--danger); background:#fff5f5;">
+                        <div class="access-item" style="grid-column:1 / -1; border:1px dashed var(--danger); background:#fff5f5;">
                             <span style="color:var(--danger); font-weight:bold;">Admin Total (Acceso completo)</span><label class="switch"><input type="checkbox" id="p-admin"><span class="slider"></span></label>
                         </div>
                     </div>
                     
-                    <button class="btn btn-primary" id="btnSaveUser" style="width:100%; display:none;">ACTUALIZAR USUARIO</button>
-                    <button class="btn btn-ghost" id="btnCancelEdit" style="width:100%; margin-top:5px; display:none;" onclick="window.resetUserForm()">CANCELAR EDICIÓN</button>
-                    <p style="font-size:10px; color:#94a3b8; text-align:center; margin-top:10px;">En este entorno SaaS, los usuarios se registran automáticamente usando Google. Haz clic en "Editar" en la tabla para asignarles permisos.</p>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn btn-primary" id="btnSaveUser" style="flex:1; display:none;">ACTUALIZAR USUARIO</button>
+                        <button class="btn btn-ghost" id="btnCancelEdit" style="flex:1; display:none;" onclick="window.resetUserForm()">CANCELAR EDICIÓN</button>
+                    </div>
+                    <p style="font-size:10px; color:#94a3b8; text-align:center; margin-top:10px;">En este entorno SaaS, los usuarios se registran automáticamente. Haz clic en "Editar" en la tabla para asignarles permisos.</p>
                 </div>
                 <div class="card table-responsive" style="padding:0;">
-                    <table id="table-users"><thead><tr><th>Usuario (Google / Correo)</th><th>Email</th><th>Rol/Gerencias</th><th>Acciones</th></tr></thead><tbody id="tbody-users"></tbody></table>
+                    <table id="table-users"><thead><tr><th>Usuario (ID / Nom)</th><th>Email</th><th>Rol/Gerencias</th><th>Acciones</th></tr></thead><tbody id="tbody-users"></tbody></table>
                 </div>
             </div>
         </section>
@@ -769,8 +782,8 @@
                 <div class="card" style="border-top: 4px solid var(--accent);">
                     <h3 style="display:flex; align-items:center; gap:5px;"><span class="material-icons-round" style="color:var(--accent);">domain</span> Gerencias</h3>
                     <p style="font-size:11px; color:#64748b; margin-bottom:10px;">Departamentos principales que evalúan solicitudes.</p>
-                    <div style="display:flex; gap:0; margin-bottom:15px;">
-                        <input type="text" id="g-nom" placeholder="Nueva Gerencia..." style="margin:0; border-radius: 8px 0 0 8px; border-right:none;">
+                    <div style="display:flex; gap:0; margin-bottom:15px; flex-wrap:wrap;">
+                        <input type="text" id="g-nom" placeholder="Nueva Gerencia..." style="margin:0; border-radius: 8px 0 0 8px; border-right:none; flex:1;">
                         <button class="btn btn-success" id="btnSaveGer" style="border-radius: 0 8px 8px 0;"><span class="material-icons-round">add</span></button>
                     </div>
                     <div id="list-ger" class="settings-list"></div>
@@ -779,9 +792,9 @@
                 <div class="card" style="border-top: 4px solid var(--info);">
                     <h3 style="display:flex; align-items:center; gap:5px;"><span class="material-icons-round" style="color:var(--info);">groups</span> Departamentos</h3>
                     <p style="font-size:11px; color:#64748b; margin-bottom:10px;">Sub-áreas ligadas a una Gerencia.</p>
-                    <div style="display:flex; gap:0; margin-bottom:15px;">
+                    <div style="display:flex; gap:0; margin-bottom:15px; flex-wrap:wrap;">
                         <select id="d-ger-sel" style="margin:0; border-radius: 8px 0 0 8px; border-right:1px solid #cbd5e1; width:40%; padding:12px;"></select>
-                        <input type="text" id="d-nom" placeholder="Nuevo Depto..." style="margin:0; border-radius: 0; border-right:none; width:60%;">
+                        <input type="text" id="d-nom" placeholder="Nuevo Depto..." style="margin:0; border-radius: 0; border-right:none; width:60%; flex:1;">
                         <button class="btn btn-success" id="btnSaveDep" style="border-radius: 0 8px 8px 0;"><span class="material-icons-round">add</span></button>
                     </div>
                     <div id="list-dep" class="settings-list"></div>
@@ -797,7 +810,7 @@
                     <h3 style="display:flex; align-items:center; gap:5px;"><span class="material-icons-round" style="color:var(--success);">description</span> Tipos de Documento</h3>
                     <p style="font-size:11px; color:#64748b; margin-bottom:10px;">Opciones para la creación de solicitudes.</p>
                     <div style="display:flex; gap:0; margin-bottom:15px;">
-                        <input type="text" id="doc-tipo-nom" placeholder="Ej: Anexo" style="margin:0; border-radius: 8px 0 0 8px; border-right:none;">
+                        <input type="text" id="doc-tipo-nom" placeholder="Ej: Anexo" style="margin:0; border-radius: 8px 0 0 8px; border-right:none; flex:1;">
                         <button class="btn btn-success" onclick="window.agregarTipoDoc()" style="border-radius: 0 8px 8px 0;"><span class="material-icons-round">add</span></button>
                     </div>
                     <div id="list-tipos-doc" class="settings-list"></div>
@@ -823,7 +836,7 @@
                     <h3 style="display:flex; align-items:center; gap:5px;"><span class="material-icons-round" style="color:var(--warning);">label</span> Estatus Listado Maestro</h3>
                     <p style="font-size:11px; color:#64748b; margin-bottom:10px;">Ciclo de vida (Ej: Vigente, Obsoleto).</p>
                     <div style="display:flex; gap:0; margin-bottom:15px;">
-                        <input type="text" id="est-nom" placeholder="Ej: Archivo Muerto" style="margin:0; border-radius: 8px 0 0 8px; border-right:none;">
+                        <input type="text" id="est-nom" placeholder="Ej: Archivo Muerto" style="margin:0; border-radius: 8px 0 0 8px; border-right:none; flex:1;">
                         <button class="btn btn-success" onclick="window.agregarEstatus()" style="border-radius: 0 8px 8px 0;"><span class="material-icons-round">add</span></button>
                     </div>
                     <div id="list-estatus" class="settings-list"></div>
@@ -837,7 +850,7 @@
            <h2 style="color:var(--primary); margin-bottom: 10px; display:flex; align-items:center; justify-content:center; gap:8px;">
                <span class="material-icons-round">mail</span> Invitar al Equipo
            </h2>
-           <p style="color:#64748b; font-size:13px; margin-bottom:20px;">Envía uma invitácion formal por correo electrónico con tu Código de Corporación.</p>
+           <p style="color:#64748b; font-size:13px; margin-bottom:20px;">Envía una invitación formal por correo electrónico con tu Código de Corporación.</p>
            
            <div style="background:#f8fafc; padding:15px; border-radius:10px; border:1px dashed var(--accent); margin-bottom:20px;">
                <label>Código de tu Corporación</label>
@@ -846,7 +859,7 @@
 
            <div style="text-align:left;">
                <label>Correo Electrónico a invitar</label>
-               <input type="email" id="inv-email" placeholder="ejemplo@fcipty.com">
+               <input type="email" id="inv-email" placeholder="ejemplo@fcipty.com" style="background:white;">
            </div>
            
            <div style="display:flex; gap:10px; margin-top:10px;">
@@ -860,12 +873,12 @@
         <div class="modal-content">
             <div class="modal-main" style="padding:30px; overflow-y:auto; position: relative;">
                 
-                <div style="display:flex; justify-content:space-between; margin-bottom:20px; align-items: flex-start;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:20px; align-items: flex-start; flex-wrap:wrap; gap:10px;">
                     <div>
                         <span id="m-id" style="font-weight:800; color:var(--primary);"></span>
-                        <h2 id="m-tit" style="margin-top:5px; font-size:20px;"></h2>
+                        <h2 id="m-tit" style="margin-top:5px; font-size:20px; word-break: break-word;"></h2>
                     </div>
-                    <div style="display:flex; gap:10px;">
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
                         <button class="btn btn-warning" id="btn-reabrir" onclick="window.reabrirSolicitud()" style="display:none; padding: 8px 15px; align-items:center;"><span class="material-icons-round" style="font-size:16px; margin-right:5px;">restore</span> Reabrir</button>
                         <button class="btn btn-danger" id="btn-anular" onclick="window.anularSolicitud()" style="display:none; padding: 8px 15px;">Anular</button>
                         <button class="btn btn-dark" onclick="window.closeModal()" style="padding: 8px 15px;">Cerrar</button>
@@ -881,9 +894,9 @@
 
                 <div id="m-admin-sla" style="display:none; margin-bottom:20px; background:#fffbeb; padding:15px; border-radius:12px; border: 1px dashed var(--warning);">
                     <h4 style="color:#b45309; margin-bottom:10px; display:flex; align-items:center; gap:8px;"><span class="material-icons-round">timer</span> SLA (Tiempo Límite Esperado)</h4>
-                    <p style="font-size:11px; color:#92400e; margin-bottom:10px;">Establece ou visualiza a data esperada para completar esta solicitação.</p>
-                    <div style="display:flex; gap:10px; align-items:center;">
-                        <input type="date" id="m-sla-date" style="margin:0; max-width:200px; background:white;">
+                    <p style="font-size:11px; color:#92400e; margin-bottom:10px;">Establece o visualiza la fecha esperada para completar esta solicitud.</p>
+                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                        <input type="date" id="m-sla-date" style="margin:0; width:100%; max-width:200px; background:white;">
                         <button class="btn btn-warning" id="btn-save-sla" onclick="window.guardarSLA()" style="padding:8px 15px;">Guardar Límite</button>
                     </div>
                 </div>
@@ -895,7 +908,7 @@
                         <div><label>Versión Final</label><p id="m-disp-ver" style="font-weight:bold;"></p></div>
                         <div>
                             <label>Fecha Última Versión</label>
-                            <div style="display:flex; align-items:center; gap:5px;">
+                            <div style="display:flex; align-items:center; gap:5px; flex-wrap:wrap;">
                                 <p id="m-disp-fecha" style="font-weight:bold; margin:0;"></p>
                                 <button id="btn-edit-fecha-final" style="display:none; background:none; border:none; cursor:pointer; color:var(--accent);"><span class="material-icons-round" style="font-size:16px;">edit</span></button>
                             </div>
@@ -914,7 +927,7 @@
 
                 <div id="m-panel-update-sgc" style="display:none; margin-bottom:20px; background:#f8fafc; padding:20px; border-radius:12px; border: 1px dashed var(--info);">
                     <h4 style="color:var(--info); margin-bottom:15px; display:flex; align-items:center; gap:8px;"><span class="material-icons-round">edit</span> Actualizar Datos de Solicitud (SGC)</h4>
-                    <p style="font-size:11px; color:#64748b; margin-bottom:15px;">Corrige ou substitui o documento antes de enviá-lo à Gerência.</p>
+                    <p style="font-size:11px; color:#64748b; margin-bottom:15px;">Corrige o reemplaza el documento antes de enviarlo a Gerencia para evitar confusiones.</p>
                     <div class="grid-2">
                         <div><label>Título del Documento</label><input type="text" id="m-upd-tit" style="background:white; margin-bottom:10px;"></div>
                         <div><label>Código Referencia</label><input type="text" id="m-upd-cod" style="background:white; margin-bottom:10px;"></div>
@@ -971,8 +984,8 @@
                         </label>
                         <p id="m-involucrados-list" style="font-size:13px; font-weight:600; color:#0369a1; word-break:break-all; margin-bottom: 10px;"></p>
                         
-                        <div id="m-add-involucrado-section" style="display:flex; gap:10px; border-top: 1px dashed #cbd5e1; padding-top: 10px;">
-                            <select id="m-new-involucrado-sel" style="margin:0; padding:8px; font-size:12px; flex:1; background:white;">
+                        <div id="m-add-involucrado-section" style="display:flex; gap:10px; border-top: 1px dashed #cbd5e1; padding-top: 10px; flex-wrap:wrap;">
+                            <select id="m-new-involucrado-sel" style="margin:0; padding:8px; font-size:12px; flex:1; min-width:200px; background:white;">
                                 <option value="">-- Seleccionar Usuario --</option>
                             </select>
                             <button class="btn btn-info" onclick="window.guardarNuevoInvolucrado()" style="padding:8px 12px; font-size:11px;">Añadir</button>
@@ -998,11 +1011,11 @@
                 <div id="m-input-area" style="display:none; margin-top:15px;">
                     <div id="reunion-container" style="display:none; margin-bottom:10px;">
                         <label style="color:var(--warning)">Fecha y Hora de Reunión</label>
-                        <input type="datetime-local" id="m-date-meeting" style="margin-bottom:10px;">
+                        <input type="datetime-local" id="m-date-meeting" style="width:100%; margin-bottom:10px; background:white;">
                     </div>
                     
                     <div style="border:1px solid #cbd5e1; border-radius:8px; margin-bottom:10px; overflow:hidden; background:white;">
-                        <div style="background:#f8fafc; padding:5px; border-bottom:1px solid #cbd5e1; display:flex; gap:5px;">
+                        <div style="background:#f8fafc; padding:5px; border-bottom:1px solid #cbd5e1; display:flex; gap:5px; flex-wrap:wrap;">
                             <button type="button" class="rt-btn" onclick="document.execCommand('bold',false,null)"><b>B</b></button>
                             <button type="button" class="rt-btn" onclick="document.execCommand('italic',false,null)"><i>I</i></button>
                             <button type="button" class="rt-btn" onclick="document.execCommand('underline',false,null)"><u>U</u></button>
@@ -1013,7 +1026,7 @@
                     
                     <div style="background:#f0fdf4; padding:10px; border-radius:8px; border:1px solid #bbf7d0;">
                             <label style="color:#15803d; margin-bottom:5px;">Adjuntar Archivo / Corrección (Opcional)</label>
-                            <input type="file" id="m-file-gestion" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png" style="margin-bottom:0; background:white;">
+                            <input type="file" id="m-file-gestion" accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.jpg,.jpeg,.png" style="margin-bottom:0; background:white; width:100%;">
                     </div>
                     <button class="btn btn-success" id="btnConfirmAction" style="width:100%; margin-top:10px;">CONFIRMAR ESTADO</button>
                     <button class="btn btn-ghost" onclick="document.getElementById('m-input-area').style.display='none'" style="width:100%; margin-top:5px;">Cancelar</button>
@@ -1023,21 +1036,21 @@
                     <p style="font-weight:800; font-size:11px; color:#64748b; margin-bottom:10px;">DEJAR UN COMENTARIO EN LA BITÁCORA:</p>
                     
                     <div style="border:1px solid #cbd5e1; border-radius:8px; margin-bottom:10px; overflow:hidden; background:white;">
-                        <div style="background:#f8fafc; padding:5px; border-bottom:1px solid #cbd5e1; display:flex; gap:5px;">
+                        <div style="background:#f8fafc; padding:5px; border-bottom:1px solid #cbd5e1; display:flex; gap:5px; flex-wrap:wrap;">
                             <button type="button" class="rt-btn" onclick="document.execCommand('bold',false,null)"><b>B</b></button>
                             <button type="button" class="rt-btn" onclick="document.execCommand('italic',false,null)"><i>I</i></button>
                             <button type="button" class="rt-btn" onclick="document.execCommand('underline',false,null)"><u>U</u></button>
                             <button type="button" class="rt-btn" onclick="document.execCommand('insertUnorderedList',false,null)">• Lista</button>
                         </div>
-                        <div id="m-comentario-libre" contenteditable="true" data-placeholder="Escribe un comentario ou consulta direta..." style="min-height:60px; padding:10px; outline:none; font-size:13px;"></div>
+                        <div id="m-comentario-libre" contenteditable="true" data-placeholder="Escribe un comentario o consulta directa..." style="min-height:60px; padding:10px; outline:none; font-size:13px;"></div>
                     </div>
 
-                    <div style="display:flex; gap:10px; align-items:center;">
-                        <div style="flex:1;">
+                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:200px;">
                             <label style="font-size:10px;">Adjuntar Referencia (Opcional)</label>
-                            <input type="file" id="m-file-comentario" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg" style="margin-bottom:0; padding:8px;">
+                            <input type="file" id="m-file-comentario" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg" style="margin-bottom:0; padding:8px; width:100%; background:white;">
                         </div>
-                        <button class="btn btn-success" onclick="window.enviarComentarioLibre()" style="height:40px; margin-top:14px;">ENVIAR COMENTARIO</button>
+                        <button class="btn btn-success" onclick="window.enviarComentarioLibre()" style="height:40px; margin-top:14px; width:100%;">ENVIAR COMENTARIO</button>
                     </div>
                 </div>
 
@@ -1088,9 +1101,9 @@
                     
                     <div><label>Duración Total</label><p id="ma-duracion" style="color:var(--success); font-weight:800; font-size:16px;">---</p></div>
 
-                    <div id="ma-controles-tiempo" style="display:flex; gap:10px; margin-top:20px;">
-                        <button id="btn-comenzar-auditoria" class="btn btn-primary" onclick="window.comenzarAuditoria()" style="flex:1; display:none;">▶️ COMENZAR AUDITORÍA</button>
-                        <button id="btn-finalizar-auditoria" class="btn btn-success" onclick="window.finalizarAuditoria()" style="flex:1; display:none;">⏹️ FINALIZAR AUDITORÍA</button>
+                    <div id="ma-controles-tiempo" style="display:flex; gap:10px; margin-top:20px; flex-wrap:wrap;">
+                        <button id="btn-comenzar-auditoria" class="btn btn-primary" onclick="window.comenzarAuditoria()" style="flex:1; min-width:200px; display:none;">▶️ COMENZAR AUDITORÍA</button>
+                        <button id="btn-finalizar-auditoria" class="btn btn-success" onclick="window.finalizarAuditoria()" style="flex:1; min-width:200px; display:none;">⏹️ FINALIZAR AUDITORÍA</button>
                     </div>
                 </div>
 
@@ -1098,21 +1111,21 @@
                     <p style="font-weight:800; font-size:11px; color:#64748b; margin-bottom:10px;">AÑADIR HALLAZGO O COMENTARIO A LA BITÁCORA:</p>
                     
                     <div style="border:1px solid #cbd5e1; border-radius:8px; margin-bottom:10px; overflow:hidden; background:white;">
-                        <div style="background:#f8fafc; padding:5px; border-bottom:1px solid #cbd5e1; display:flex; gap:5px;">
+                        <div style="background:#f8fafc; padding:5px; border-bottom:1px solid #cbd5e1; display:flex; gap:5px; flex-wrap:wrap;">
                             <button type="button" class="rt-btn" onclick="document.execCommand('bold',false,null)"><b>B</b></button>
                             <button type="button" class="rt-btn" onclick="document.execCommand('italic',false,null)"><i>I</i></button>
                             <button type="button" class="rt-btn" onclick="document.execCommand('underline',false,null)"><u>U</u></button>
                             <button type="button" class="rt-btn" onclick="document.execCommand('insertUnorderedList',false,null)">• Lista</button>
                         </div>
-                        <div id="ma-comentario-libre" contenteditable="true" data-placeholder="Describe el hallazgo, nota o acordo..." style="min-height:60px; padding:10px; outline:none; font-size:13px;"></div>
+                        <div id="ma-comentario-libre" contenteditable="true" data-placeholder="Describe el hallazgo, nota o acuerdo..." style="min-height:60px; padding:10px; outline:none; font-size:13px;"></div>
                     </div>
 
-                    <div style="display:flex; gap:10px; align-items:center;">
-                        <div style="flex:1;">
+                    <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                        <div style="flex:1; min-width:200px;">
                             <label style="font-size:10px;">Evidencia (Opcional)</label>
-                            <input type="file" id="ma-file-comentario" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg" style="margin-bottom:0; padding:8px;">
+                            <input type="file" id="ma-file-comentario" accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg" style="margin-bottom:0; padding:8px; width:100%; background:white;">
                         </div>
-                        <button class="btn btn-info" onclick="window.enviarComentarioAuditoria()" style="height:40px; margin-top:14px;">GUARDAR EN BITÁCORA</button>
+                        <button class="btn btn-info" onclick="window.enviarComentarioAuditoria()" style="height:40px; margin-top:14px; width:100%;">GUARDAR EN BITÁCORA</button>
                     </div>
                 </div>
 
@@ -1132,9 +1145,9 @@
            </h2>
            <div class="grid-2" id="dinamic-form-maestro"></div>
            <div style="background:#eff6ff; padding:15px; border-radius:10px; margin-top:15px; border:1px dashed var(--primary);">
-               <label style="color:var(--primary); font-size:11px;">Herramienta Rápida: Subir arquivo e gerar URL</label>
-               <div style="display:flex; gap:10px; align-items:center; margin-top:5px;">
-                   <input type="file" id="lm-generic-file" style="margin:0; background:white; flex:1;">
+               <label style="color:var(--primary); font-size:11px;">Herramienta Rápida: Subir archivo y generar URL</label>
+               <div style="display:flex; gap:10px; align-items:center; margin-top:5px; flex-wrap:wrap;">
+                   <input type="file" id="lm-generic-file" style="margin:0; background:white; flex:1; min-width:200px;">
                    <button class="btn btn-info" onclick="window.subirArchivoGenericoLM()">Subir y Llenar Campo</button>
                </div>
            </div>
@@ -1173,7 +1186,11 @@
         const EMAIL_ADMIN_SGC = "sistemadegestion@fcipty.com"; 
         const EMAIL_GRUPO_SGC = "actualizacion@fcipty.com"; 
 
-        (function() { emailjs.init(EMAIL_PUBLIC_KEY); })();
+        try {
+            if(window.emailjs) window.emailjs.init(EMAIL_PUBLIC_KEY);
+        } catch(e) {
+            console.warn("EmailJS load issue:", e);
+        }
 
         const CLOUD_NAME = "saas1223";
         const UPLOAD_PRESET = "fci_documentos";
@@ -1270,18 +1287,18 @@
             
             const msg = `Has sido invitado a unirte a la plataforma SGC PRO.\n\nPor favor, ingresa con tu cuenta de Google y utiliza este CÓDIGO DE CORPORACIÓN para unirte al equipo:\n\nCÓDIGO: ${corpInviteCodeLocal}`;
             
-            sendNotification({to: em, cc: ""}, "Invitación a SGC PRO SaaS", msg);
+            window.sendNotification({to: em, cc: ""}, "Invitación a SGC PRO SaaS", msg);
             alert("Invitación enviada corretamente.");
             document.getElementById('modal-invitar').style.display = 'none';
             document.getElementById('inv-email').value = "";
         };
 
-        // ====== FUNÇÃO PRINCIPAL PARA CARREGAR DADOS DO FIREBASE ======
+        // ====== FUNCIÓN PRINCIPAL PARA CARGAR DATOS DEL FIREBASE ======
         window.cargarDatos = () => {
-            if (!appId) return; // Segurança extra
+            if (!appId) return; // Seguridad
             const path = (c) => collection(db, "artifacts", appId, "public", "data", c);
 
-            // CARREGAR AUDITORIAS
+            // CARGAR AUDITORIAS
             onSnapshot(path("Auditorias"), s => {
                 globalAllAuditorias = [];
                 s.forEach(d => { let a = d.data(); a.id = d.id; globalAllAuditorias.push(a); });
@@ -1289,7 +1306,7 @@
                 window.renderTablaAuditorias(currentYearFilter);
             });
 
-            // CARREGAR USUÁRIOS
+            // CARGAR USUARIOS
             onSnapshot(path("Usuarios"), s => {
                 const tb = document.getElementById('tbody-users'); if(!tb) return;
                 allUsers = []; let usersHtml = ""; 
@@ -1319,7 +1336,7 @@
                 if(document.getElementById('m-new-involucrado-sel')) document.getElementById('m-new-involucrado-sel').innerHTML = involucradosOptions;
             });
 
-            // CARREGAR GERÊNCIAS
+            // CARGAR GERENCIAS
             onSnapshot(path("Gerencias"), s => {
                 let h = "<option value=''>-- Seleccionar Gerencia --</option>", l = "";
                 let checkGerHtml = "";
@@ -1336,7 +1353,7 @@
                 if(document.getElementById('sol-ger') && document.getElementById('sol-ger').value) { document.getElementById('sol-ger').dispatchEvent(new Event('change')); }
             });
 
-            // CARREGAR DEPARTAMENTOS
+            // CARGAR DEPARTAMENTOS
             onSnapshot(path("Departamentos"), s => {
                 let l = ""; allDepartamentos = [];
                 s.forEach(d => {
@@ -1347,7 +1364,7 @@
                 if(document.getElementById('sol-ger')) document.getElementById('sol-ger').dispatchEvent(new Event('change'));
             });
 
-            // CARREGAR CONFIGURAÇÃO DINÂMICA
+            // CARGAR CONFIGURACIÓN DINÁMICA
             const docConfigMaestro = doc(db, "artifacts", appId, "public", "data", "Configuracion", "MaestroSettings");
             onSnapshot(docConfigMaestro, d => {
                 if(d.exists()) {
@@ -1363,7 +1380,7 @@
                 window.renderListasConfig(); window.renderTablaMaestro();
             });
 
-            // CARREGAR SOLICITAÇÕES
+            // CARGAR SOLICITUDES
             onSnapshot(path("Solicitudes"), s => {
                 const tbHist = document.getElementById('tbody-historial'); const tbGest = document.getElementById('tbody-gestionar');
                 if(!tbHist || !tbGest) return;
@@ -1454,7 +1471,7 @@
                 setTimeout(() => { window.checkDailyAlerts(); }, 3000);
             });
 
-            // CARREGAR LISTADO MAESTRO
+            // CARGAR LISTADO MAESTRO
             onSnapshot(path("ListadoMaestro"), s => {
                 dataMaestro = []; s.forEach(d => { let data = d.data(); data.docId = d.id; dataMaestro.push(data); });
                 window.renderTablaMaestro();
@@ -1487,7 +1504,7 @@
             document.getElementById('btn-export-list').style.display = esSGC ? 'inline-flex' : 'none';
             document.getElementById('btn-export-admin').style.display = p.admin ? 'inline-flex' : 'none';
             
-            // CARGA DE DADOS DO FIREBASE AGORA FUNCIONARÁ CORRETAMENTE
+            // CARGA DE DATOS DEL FIREBASE
             window.cargarDatos();
             
             if(verAuditoria && document.getElementById('aud-year-select')) {
@@ -1876,7 +1893,11 @@
         window.sendNotification = (destinatarios, subject, message) => {
             if (!destinatarios.to && !destinatarios.cc) return;
             const templateParams = { to_email: destinatarios.to, cc_email: destinatarios.cc || "", subject: subject, message: message };
-            emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, templateParams).catch((error) => console.error('Error enviando notificación', error));
+            if(window.emailjs) {
+                window.emailjs.send(EMAIL_SERVICE_ID, EMAIL_TEMPLATE_ID, templateParams).catch((error) => console.error('Error enviando notificación', error));
+            } else {
+                console.warn("EmailJS no está cargado. Correo omitido:", templateParams);
+            }
         }
 
         window.uploadToCloudinary = async (file) => {
@@ -1968,7 +1989,7 @@
         window.cargarUsuarioParaEditar = (usuarioId) => {
             const u = allUsers.find(x => x.usuario === usuarioId); if(!u) return;
             document.getElementById('user-form-title').innerText = "Editando Usuario: " + u.usuario;
-            document.getElementById('u-nom').value = u.nombre || ''; document.getElementById('u-usr').value = u.usuario || ''; document.getElementById('u-usr').disabled = true; document.getElementById('u-pas').value = u.pass || ''; document.getElementById('u-rol').value = u.role || ''; document.getElementById('u-email').value = u.email || '';
+            document.getElementById('u-nom').value = u.nombre || ''; document.getElementById('u-usr').value = u.usuario || ''; document.getElementById('u-usr').disabled = true; document.getElementById('u-rol').value = u.role || ''; document.getElementById('u-email').value = u.email || '';
             let gers = u.gerencias || []; if(!u.gerencias && u.gerencia) gers = [u.gerencia];
             document.querySelectorAll('#u-ger-list input[type="checkbox"]').forEach(cb => { cb.checked = gers.includes(cb.value); });
             const p = u.permisos || {};
@@ -1986,9 +2007,13 @@
 
         window.actualizarDatosSGC = async () => {
             const tit = document.getElementById('m-upd-tit').value; const cod = document.getElementById('m-upd-cod').value; const ver = document.getElementById('m-upd-ver').value; const f = document.getElementById('m-upd-file');
-            if(!tit) return alert("El título es obligatorio."); window.showLoading();
+            if(!tit) return alert("El título es obligatorio.");
+            window.showLoading();
             let updateData = { titulo: tit, cod_ref: cod, ver_ref: ver }; let msjChat = `SGC actualizó los datos pre-aprobación. Título: ${tit}, Cód: ${cod}, Ver: ${ver}.`;
-            if(f.files[0]) { let fileUrl = await window.uploadToCloudinary(f.files[0]); if(!fileUrl) { window.hideLoading(); return alert("Error subiendo arquivo."); } updateData.adjunto = fileUrl; updateData.adjunto_nombre = f.files[0].name; msjChat += ` (Nuevo adjunto subido: ${f.files[0].name})`; }
+            if(f.files[0]) {
+                let fileUrl = await window.uploadToCloudinary(f.files[0]); if(!fileUrl) { window.hideLoading(); return alert("Error subiendo archivo."); }
+                updateData.adjunto = fileUrl; updateData.adjunto_nombre = f.files[0].name; msjChat += ` (Nuevo adjunto subido: ${f.files[0].name})`;
+            }
             await updateDoc(doc(db, "artifacts", appId, "public", "data", "Solicitudes", selectedId), { ...updateData, chat: arrayUnion({u: currentUser.nombre, m: `✏️ ${msjChat}`, t: new Date().toLocaleString()}) });
             window.hideLoading(); alert("Datos actualizados correctamente."); window.closeModal();
         }
@@ -2001,8 +2026,7 @@
 
         window.verDetalle = async (id) => {
             selectedId = id; document.getElementById('m-extra-input').innerHTML = ""; document.getElementById('m-comentario-libre').innerHTML = "";
-            const docSnap = await getDoc(doc(db, "artifacts", appId, "public", "data", "Solicitudes", id));
-            selectedDocData = docSnap.data(); const s = selectedDocData; const p = currentUser.permisos;
+            const docSnap = await getDoc(doc(db, "artifacts", appId, "public", "data", "Solicitudes", id)); selectedDocData = docSnap.data(); const s = selectedDocData; const p = currentUser.permisos;
             
             document.getElementById('m-id').innerText = s.customId; document.getElementById('m-tit').innerText = s.titulo; document.getElementById('m-sol').innerText = s.solicitante;
             let estadoStr = (s.estado || "").toUpperCase(); let isAprobadoFinalModal = estadoStr.includes('APROBADO FINAL'); let isCancelado = estadoStr === 'ANULADO' || estadoStr === 'RECHAZADO';
@@ -2031,13 +2055,7 @@
             const puedeGestionarSGC = esAdminSGC && activo && s.idx !== 2; const puedeGestionarGerente = esGer && s.idx === 2 && activo;
             const esInvolucradoActivo = s.involucrados && currentUser.email && s.involucrados.includes(currentUser.email.toLowerCase()); const esDuenio = s.uid === currentUser.usuario || esInvolucradoActivo; 
 
-            document.getElementById('btn-reabrir').style.display = (esAdminSGC && !activo) ? 'inline-flex' : 'none';
-            document.getElementById('m-add-involucrado-section').style.display = activo ? 'flex' : 'none';
-            document.getElementById('m-actions').style.display = (puedeGestionarSGC || puedeGestionarGerente) ? 'block' : 'none';
-            document.getElementById('applicant-actions').style.display = (esDuenio && activo) ? 'block' : 'none';
-            document.getElementById('m-input-area').style.display = 'none';
-            document.getElementById('general-comment-area').style.display = !isCancelado ? 'block' : 'none';
-            document.getElementById('btn-anular').style.display = ((puedeGestionarSGC || esDuenio) && activo) ? 'inline-block' : 'none'; 
+            document.getElementById('btn-reabrir').style.display = (esAdminSGC && !activo) ? 'inline-flex' : 'none'; document.getElementById('m-add-involucrado-section').style.display = activo ? 'flex' : 'none'; document.getElementById('m-actions').style.display = (puedeGestionarSGC || puedeGestionarGerente) ? 'block' : 'none'; document.getElementById('applicant-actions').style.display = (esDuenio && activo) ? 'block' : 'none'; document.getElementById('m-input-area').style.display = 'none'; document.getElementById('general-comment-area').style.display = !isCancelado ? 'block' : 'none'; document.getElementById('btn-anular').style.display = ((puedeGestionarSGC || esDuenio) && activo) ? 'inline-block' : 'none'; 
 
             const slaPanel = document.getElementById('m-admin-sla'); const slaDateInput = document.getElementById('m-sla-date'); const slaBtn = document.getElementById('btn-save-sla');
             if(s.fecha_esperada_cierre) { slaPanel.style.display = 'block'; slaDateInput.value = s.fecha_esperada_cierre; if(!esAdminSGC) { slaDateInput.disabled = true; slaBtn.style.display = 'none'; } else { slaDateInput.disabled = false; slaBtn.style.display = 'inline-block'; } } else if (esAdminSGC && activo) { slaPanel.style.display = 'block'; slaDateInput.value = ''; slaDateInput.disabled = false; slaBtn.style.display = 'inline-block'; } else { slaPanel.style.display = 'none'; }
@@ -2118,36 +2136,6 @@
             await updateDoc(doc(db, "artifacts", appId, "public", "data", "Solicitudes", selectedId), { estado: "Anulado", chat: arrayUnion({u: currentUser.nombre, m: `🚫 <b>SOLICITUD ANULADA</b><br>Motivo: ${motivo}`, t: new Date().toLocaleString()}) });
             window.hideLoading(); window.closeModal();
         }
-
-        window.addInvolucradoList = () => {
-            const sel = document.getElementById('sol-involucrado-sel'); const email = sel.value; const name = sel.options[sel.selectedIndex].text;
-            if(!email) return alert("Seleccione un usuario válido.");
-            const existingTags = Array.from(document.querySelectorAll('.involucrado-item')); if(existingTags.some(el => el.dataset.email === email)) return alert("El usuario ya está en la lista.");
-            const div = document.createElement('div'); div.className = 'involucrado-item badge badge-info'; div.style.display = 'flex'; div.style.alignItems = 'center'; div.style.gap = '5px'; div.style.fontSize = '12px'; div.style.padding = '6px 12px'; div.dataset.email = email;
-            div.innerHTML = `${name} <span class="material-icons-round" style="font-size:14px; cursor:pointer; color:var(--danger);" onclick="this.parentElement.remove()">close</span>`;
-            document.getElementById('lista-involucrados-tags').appendChild(div); sel.value = "";
-        };
-
-        window.guardarNuevoInvolucrado = async () => {
-            const sel = document.getElementById('m-new-involucrado-sel'); const newEmail = sel.value; const newName = sel.options[sel.selectedIndex].text;
-            if(!newEmail || !newEmail.includes('@')) return alert('Selecciona un usuario válido.'); window.showLoading();
-            let currentInv = selectedDocData.involucrados || []; if(currentInv.includes(newEmail)) { window.hideLoading(); return alert('El usuario ya está en la lista de involucrados.'); } 
-            currentInv.push(newEmail);
-            await updateDoc(doc(db, "artifacts", appId, "public", "data", "Solicitudes", selectedId), { involucrados: currentInv, chat: arrayUnion({u: currentUser.nombre, m: `👥 Añadió a ${newName} a la lista de involucrados.`, t: new Date().toLocaleString()}) });
-            sel.value = ''; window.hideLoading(); window.verDetalle(selectedId);
-        };
-
-        window.filtrarTabla = (inputId, tbodyId) => {
-            const input = document.getElementById(inputId); if (!input) return; const filter = input.value.toLowerCase(); const tbody = document.getElementById(tbodyId); if (!tbody) return; const trs = tbody.getElementsByTagName('tr');
-            for (let i = 0; i < trs.length; i++) { let rowText = trs[i].textContent || trs[i].innerText; if (rowText.toLowerCase().indexOf(filter) > -1) { trs[i].style.display = ""; } else { trs[i].style.display = "none"; } }
-        };
-
-        window.setFilterGest = (filterText) => {
-            const tbody = document.getElementById('tbody-gestionar'); if (!tbody) return; const trs = tbody.getElementsByTagName('tr'); const filter = filterText.toLowerCase();
-            for (let i = 0; i < trs.length; i++) { let statusCell = trs[i].getElementsByTagName('td')[3]; if (statusCell) { let text = statusCell.textContent || statusCell.innerText; if (filter === "" || text.toLowerCase().includes(filter)) { trs[i].style.display = ""; } else { trs[i].style.display = "none"; } } }
-        };
-
-        window.rechazar = () => { tempAction = 'Rechazado'; document.getElementById('m-input-area').style.display='block'; document.getElementById('reunion-container').style.display = 'none'; };
 
     </script>
 </body>
